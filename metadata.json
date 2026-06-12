@@ -1,0 +1,8 @@
+{
+  "name": "Tasha Contracts India",
+  "description": "Tasha Contracts India - Premium contracting & construction company across India specializing in prefabricated structures, LGSF buildings, commercial projects, and high-quality civil architectural solutions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

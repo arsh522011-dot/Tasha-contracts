@@ -1,0 +1,2297 @@
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Building2, Phone, Mail, MapPin, Clock, Send, 
+  CheckCircle2, ArrowRight, ShieldCheck, Download, Award,
+  Users, HelpCircle, Layers, Calendar, ChevronRight, Search, Filter,
+  PhoneCall, Star, Quote, Eye, ArrowUpRight, Check, Sparkles, Sun, Moon, Menu, X,
+  Lock, Scale, Video
+} from 'lucide-react';
+
+import { Project, Service, Testimonial, TeamMember, Certificate, CareerListing, QuoteRequest, ContactMessage, CareerApplication } from './types';
+import { 
+  INITIAL_PROJECTS, INITIAL_SERVICES, INITIAL_TESTIMONIALS, 
+  INITIAL_TEAM, INITIAL_CERTIFICATES, INITIAL_CAREERS, INITIAL_SYSTEM_INFO 
+} from './data';
+
+import { DynamicIcon } from './components/Icons';
+import { ProjectDetailsPopup } from './components/ProjectDetailsPopup';
+import { StatsCounter } from './components/StatsCounter';
+import { QuoteForm } from './components/QuoteForm';
+import { CareersSection } from './components/CareersSection';
+import { AdminPanel } from './components/AdminPanel';
+import { WebMediaManager } from './components/WebMediaManager';
+import { AddTestimonialForm } from './components/AddTestimonialForm';
+
+// Firebase & Firestore sync layer
+import { testConnection } from './lib/firebase';
+import { 
+  fetchCollectionFromFirestore, 
+  saveItemToFirestore, 
+  deleteItemFromFirestore, 
+  saveAllCollectionToFirestore, 
+  fetchSystemInfoFromFirestore, 
+  saveSystemInfoToFirestore 
+} from './lib/firestoreSync';
+
+export default function App() {
+  // Database connectivity mode
+  const [dbMode, setDbMode] = useState<'connecting' | 'firebase' | 'local'>('connecting');
+
+  // Theme state permanently set to dark
+  const [themeMode, setThemeMode] = useState<'dark' | 'light'>('dark');
+
+  // Multi-page navigation state
+  const [showSplash, setShowSplash] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<string>('home');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+
+  // Core synchronized application state
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [careers, setCareers] = useState<CareerListing[]>([]);
+  const [quotes, setQuotes] = useState<QuoteRequest[]>([]);
+  const [contacts, setContacts] = useState<ContactMessage[]>([]);
+  const [applications, setApplications] = useState<CareerApplication[]>([]);
+  const [systemInfo, setSystemInfo] = useState<any>(INITIAL_SYSTEM_INFO);
+
+  // Search and filter states for projects
+  const [projectFilterCategory, setProjectFilterCategory] = useState<string>('All');
+  const [projectSearchQuery, setProjectSearchQuery] = useState<string>('');
+
+  // active detail popup state
+  const [activePopupProject, setActivePopupProject] = useState<Project | null>(null);
+
+  // contact page simple message draft
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    mobile: '',
+    subject: '',
+    message: ''
+  });
+  const [contactStatus, setContactStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  // Sync state from Database (with LocalStorage fallback) on mount
+  useEffect(() => {
+    async function initializeApplicationData() {
+      // Removed theme loading to enforce dark mode
+
+      // Check live Firestore connection
+      try {
+        console.log("Checking Live Firestore cloud connection...");
+        const isConnected = await testConnection();
+        if (isConnected) {
+          setDbMode('firebase');
+          
+          const [
+            liveProjects,
+            liveServices,
+            liveTestimonials,
+            liveTeam,
+            liveCerts,
+            liveCareers,
+            liveQuotes,
+            liveContacts,
+            liveApplications,
+            liveSys
+          ] = await Promise.all([
+            fetchCollectionFromFirestore<Project>('projects', INITIAL_PROJECTS),
+            fetchCollectionFromFirestore<Service>('services', INITIAL_SERVICES),
+            fetchCollectionFromFirestore<Testimonial>('testimonials', INITIAL_TESTIMONIALS),
+            fetchCollectionFromFirestore<TeamMember>('team', INITIAL_TEAM),
+            fetchCollectionFromFirestore<Certificate>('certs', INITIAL_CERTIFICATES),
+            fetchCollectionFromFirestore<CareerListing>('careers', INITIAL_CAREERS),
+            fetchCollectionFromFirestore<QuoteRequest>('quotes', []),
+            fetchCollectionFromFirestore<ContactMessage>('contacts', []),
+            fetchCollectionFromFirestore<CareerApplication>('applications', []),
+            fetchSystemInfoFromFirestore(INITIAL_SYSTEM_INFO)
+          ]);
+
+          setProjects(liveProjects);
+          setServices(liveServices);
+          setTestimonials(liveTestimonials);
+          setTeam(liveTeam);
+          setCertificates(liveCerts);
+          setCareers(liveCareers);
+          setQuotes(liveQuotes);
+          setContacts(liveContacts);
+          setApplications(liveApplications);
+          
+          const parsed = { ...INITIAL_SYSTEM_INFO, ...liveSys };
+          if (parsed.logoUrl === undefined || !parsed.logoUrl) {
+            parsed.logoUrl = INITIAL_SYSTEM_INFO.logoUrl;
+          }
+          setSystemInfo(parsed);
+          return;
+        }
+      } catch (err) {
+        console.warn("Firestore collection load failed; switching to localStorage load.", err);
+      }
+
+      // Fallback local storage state load if credentials/offline block
+      setDbMode('local');
+      try {
+        const savedProjects = localStorage.getItem('tasha_projects');
+        setProjects(savedProjects ? JSON.parse(savedProjects) : INITIAL_PROJECTS);
+
+        const savedServices = localStorage.getItem('tasha_services');
+        setServices(savedServices ? JSON.parse(savedServices) : INITIAL_SERVICES);
+
+        const savedTestimonials = localStorage.getItem('tasha_testimonials');
+        setTestimonials(savedTestimonials ? JSON.parse(savedTestimonials) : INITIAL_TESTIMONIALS);
+
+        const savedTeam = localStorage.getItem('tasha_team');
+        setTeam(savedTeam ? JSON.parse(savedTeam) : INITIAL_TEAM);
+
+        const savedCerts = localStorage.getItem('tasha_certs');
+        setCertificates(savedCerts ? JSON.parse(savedCerts) : INITIAL_CERTIFICATES);
+
+        const savedCareers = localStorage.getItem('tasha_careers');
+        setCareers(savedCareers ? JSON.parse(savedCareers) : INITIAL_CAREERS);
+
+        const savedQuotes = localStorage.getItem('tasha_quotes');
+        setQuotes(savedQuotes ? JSON.parse(savedQuotes) : []);
+
+        const savedContacts = localStorage.getItem('tasha_contacts');
+        setContacts(savedContacts ? JSON.parse(savedContacts) : []);
+
+        const savedApps = localStorage.getItem('tasha_applications');
+        setApplications(savedApps ? JSON.parse(savedApps) : []);
+
+        const savedSys = localStorage.getItem('tasha_system');
+        if (savedSys) {
+          const parsed = JSON.parse(savedSys);
+          if (!parsed.cloudinaryCloudName) parsed.cloudinaryCloudName = INITIAL_SYSTEM_INFO.cloudinaryCloudName;
+          if (!parsed.cloudinaryUploadPreset) parsed.cloudinaryUploadPreset = INITIAL_SYSTEM_INFO.cloudinaryUploadPreset;
+          if (parsed.logoUrl === undefined || !parsed.logoUrl) {
+            parsed.logoUrl = INITIAL_SYSTEM_INFO.logoUrl;
+          }
+          if (!parsed.heroVideoUrl) parsed.heroVideoUrl = INITIAL_SYSTEM_INFO.heroVideoUrl;
+          if (!parsed.heroPosterUrl) parsed.heroPosterUrl = INITIAL_SYSTEM_INFO.heroPosterUrl;
+          if (!parsed.ctaBgUrl) parsed.ctaBgUrl = INITIAL_SYSTEM_INFO.ctaBgUrl;
+          if (!parsed.mapBgUrl) parsed.mapBgUrl = INITIAL_SYSTEM_INFO.mapBgUrl;
+          if (!parsed.founderName) parsed.founderName = INITIAL_SYSTEM_INFO.founderName;
+          if (!parsed.founderRole) parsed.founderRole = INITIAL_SYSTEM_INFO.founderRole;
+          if (!parsed.founderImage) parsed.founderImage = INITIAL_SYSTEM_INFO.founderImage;
+          if (!parsed.founderBio) parsed.founderBio = INITIAL_SYSTEM_INFO.founderBio;
+          if (!parsed.founderLocation) parsed.founderLocation = INITIAL_SYSTEM_INFO.founderLocation;
+          if (!parsed.founderImageFit) parsed.founderImageFit = INITIAL_SYSTEM_INFO.founderImageFit;
+          if (!parsed.founderImageShape) parsed.founderImageShape = INITIAL_SYSTEM_INFO.founderImageShape;
+          if (parsed.statProjectsCompleted === undefined) parsed.statProjectsCompleted = INITIAL_SYSTEM_INFO.statProjectsCompleted;
+          if (parsed.statHappyClients === undefined) parsed.statHappyClients = INITIAL_SYSTEM_INFO.statHappyClients;
+          if (parsed.statYearsExperience === undefined) parsed.statYearsExperience = INITIAL_SYSTEM_INFO.statYearsExperience;
+          if (parsed.statTeamMembers === undefined) parsed.statTeamMembers = INITIAL_SYSTEM_INFO.statTeamMembers;
+          if (parsed.statCitiesServed === undefined) parsed.statCitiesServed = INITIAL_SYSTEM_INFO.statCitiesServed;
+          if (parsed.statProjectsLabel === undefined) parsed.statProjectsLabel = INITIAL_SYSTEM_INFO.statProjectsLabel;
+          if (parsed.statHappyClientsLabel === undefined) parsed.statHappyClientsLabel = INITIAL_SYSTEM_INFO.statHappyClientsLabel;
+          if (parsed.statYearsExperienceLabel === undefined) parsed.statYearsExperienceLabel = INITIAL_SYSTEM_INFO.statYearsExperienceLabel;
+          if (parsed.statTeamMembersLabel === undefined) parsed.statTeamMembersLabel = INITIAL_SYSTEM_INFO.statTeamMembersLabel;
+          if (parsed.statCitiesServedLabel === undefined) parsed.statCitiesServedLabel = INITIAL_SYSTEM_INFO.statCitiesServedLabel;
+          setSystemInfo(parsed);
+        } else {
+          setSystemInfo(INITIAL_SYSTEM_INFO);
+        }
+      } catch (e) {
+        console.warn('LocalStorage error, keeping preloaded defaults', e);
+        setProjects(INITIAL_PROJECTS);
+        setServices(INITIAL_SERVICES);
+        setTestimonials(INITIAL_TESTIMONIALS);
+        setTeam(INITIAL_TEAM);
+        setCertificates(INITIAL_CERTIFICATES);
+        setCareers(INITIAL_CAREERS);
+        setSystemInfo(INITIAL_SYSTEM_INFO);
+      }
+    }
+
+    initializeApplicationData();
+  }, []);
+
+  // Hidden key shortcut to access admin panel securely without public footer link
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Secret key combination: Ctrl+Shift+A or Alt+Shift+A
+      if ((e.ctrlKey || e.altKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        setActiveTab('admin');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Scroll to top when the active page tab changes
+  useEffect(() => {
+    try {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    } catch (err) {
+      window.scrollTo({ top: 0 });
+    }
+  }, [activeTab]);
+
+  // Sync state helpers to update React memory + LocalStorage dynamically + Live Firestore (if connected)
+  const updateProjects = (data: Project[]) => {
+    setProjects(data);
+    localStorage.setItem('tasha_projects', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('projects', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateServices = (data: Service[]) => {
+    setServices(data);
+    localStorage.setItem('tasha_services', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('services', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateTestimonials = (data: Testimonial[]) => {
+    setTestimonials(data);
+    localStorage.setItem('tasha_testimonials', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('testimonials', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateTeam = (data: TeamMember[]) => {
+    setTeam(data);
+    localStorage.setItem('tasha_team', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('team', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateCertificates = (data: Certificate[]) => {
+    setCertificates(data);
+    localStorage.setItem('tasha_certs', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('certs', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateCareers = (data: CareerListing[]) => {
+    setCareers(data);
+    localStorage.setItem('tasha_careers', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('careers', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateQuotes = (data: QuoteRequest[]) => {
+    setQuotes(data);
+    localStorage.setItem('tasha_quotes', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('quotes', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateContacts = (data: ContactMessage[]) => {
+    setContacts(data);
+    localStorage.setItem('tasha_contacts', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('contacts', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateApplications = (data: CareerApplication[]) => {
+    setApplications(data);
+    localStorage.setItem('tasha_applications', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveAllCollectionToFirestore('applications', data).catch(err => console.warn('Firestore sync failed', err));
+    }
+  };
+  const updateSystemInfo = (data: any) => {
+    setSystemInfo(data);
+    localStorage.setItem('tasha_system', JSON.stringify(data));
+    if (dbMode === 'firebase') {
+      saveSystemInfoToFirestore(data).catch(err => console.warn('Firestore system sync failed', err));
+    }
+  };
+
+  // Submit quote request from the form page
+  const handleQuoteSubmit = (quote: QuoteRequest) => {
+    const updated = [quote, ...quotes];
+    updateQuotes(updated);
+  };
+
+  // Submit career application from candidate page
+  const handleCareerApply = (app: CareerApplication) => {
+    const updated = [app, ...applications];
+    updateApplications(updated);
+  };
+
+  // Submit general contact inquiry form
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      setContactStatus('error');
+      return;
+    }
+    const newMsg: ContactMessage = {
+      id: 'msg_' + Date.now(),
+      name: contactForm.name,
+      email: contactForm.email,
+      mobile: contactForm.mobile,
+      subject: contactForm.subject || 'General Contracting Inquiry',
+      message: contactForm.message,
+      submissionDate: new Date().toISOString(),
+      status: 'New'
+    };
+    updateContacts([newMsg, ...contacts]);
+    setContactStatus('success');
+    setContactForm({ name: '', email: '', mobile: '', subject: '', message: '' });
+  };
+
+  // Filter projects by both category selection and search query
+  const filteredProjects = projects.filter((p) => {
+    const matchesCat = projectFilterCategory === 'All' || p.category === projectFilterCategory;
+    const matchesSearch = p.title.toLowerCase().includes(projectSearchQuery.toLowerCase()) || 
+                          p.location.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
+                          p.client.toLowerCase().includes(projectSearchQuery.toLowerCase()) ||
+                          p.description.toLowerCase().includes(projectSearchQuery.toLowerCase());
+    return matchesCat && matchesSearch;
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const uniqueCategories = ['All', 'LGSF / Prefabricated', 'Civil Construction', 'Commercial', 'Residential', 'Interior Fit-Out'];
+  const isDark = themeMode === 'dark';
+
+  if (showSplash) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+        className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${isDark ? 'bg-[#050D1A]' : 'bg-slate-50'} z-[9999]`}
+      >
+        <motion.img 
+          initial={{ scale: 0.8, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781288451/samples/chair-and-coffee-table.png"
+          alt="Loading Company Logo"
+          className="h-28 md:h-36 -mb-4 md:-mb-6 object-contain select-none shadow-2xl"
+        />
+        <motion.h1 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="text-2xl md:text-3xl font-display font-black uppercase tracking-[0.2em] text-amber-500"
+        >
+           Contracts India
+        </motion.h1>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className={`min-h-screen font-sans transition-colors duration-300 ${
+      isDark 
+        ? 'bg-[#050D1A] text-white' 
+        : 'bg-slate-50/50 text-slate-800'
+    }`}>
+      
+      {/* --- MAIN HEADER / NAVIGATION --- */}
+      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-900 shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          
+          {/* Majestic Company Logo & Brand wordmark */}
+          <div 
+            onClick={() => {
+              setActiveTab('home');
+              setMobileMenuOpen(false);
+            }}
+            className="flex items-center cursor-pointer group select-none shrink-0"
+          >
+            {systemInfo.logoUrl ? (
+              <img 
+                src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781288451/samples/chair-and-coffee-table.png" 
+                alt="Tasha Contracts Logo" 
+                referrerPolicy="no-referrer"
+                loading="eager"
+                className="h-14 md:h-16 w-auto object-contain select-none"
+              />
+            ) : (
+              /* Wordmark in gold */
+              <div className="flex flex-col text-left leading-none">
+                <span className="font-display text-[18px] md:text-[22px] font-black uppercase tracking-widest text-amber-500 drop-shadow-sm font-sans">
+                  TASHA
+                </span>
+                <span className="text-[8.5px] font-extrabold tracking-[0.22em] -mt-0.5 uppercase text-amber-500">
+                  CONTRACTS
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Nav Items */}
+          <nav className="hidden xl:flex items-center gap-1.5">
+            {[
+              { id: 'home', label: 'Corporate Home' },
+              { id: 'about', label: 'About Tasha' },
+              { id: 'services', label: 'Our Services' },
+              { id: 'projects', label: 'Completed & Ongoing' },
+              { id: 'careers', label: 'Careers Portal' },
+              { id: 'contact', label: 'Get in Touch' }
+            ].map((tab) => (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`px-3.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all duration-200 cursor-pointer ${
+                  activeTab === tab.id
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md'
+                    : 'hover:bg-amber-500/10 text-gray-300 hover:text-white'
+                }`}
+              >
+                {tab.label}
+              </motion.button>
+            ))}
+          </nav>
+
+          {/* CTA Header Button on Desktop */}
+          <div className="hidden lg:flex items-center gap-3">
+            <button
+              onClick={() => setActiveTab('contact')}
+              className="hidden lg:flex px-4 py-2.5 bg-slate-900 text-amber-500 border border-amber-500/40 hover:bg-amber-500 hover:text-slate-950 transition-all font-bold text-xs uppercase tracking-wider rounded-lg shadow-md cursor-pointer"
+            >
+              Bid Request
+            </button>
+          </div>
+
+          {/* Mobile Menu Icon on Mobile */}
+          <div className="xl:hidden flex items-center gap-2.5">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-lg transition-colors border text-gray-400 hover:text-white border-slate-800 bg-slate-950/20"
+              aria-label="Toggle Mobile Menu"
+            >
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+
+        </div>
+      </header>
+
+      {/* --- MOBILE COLLAPSED MENU DRAWER --- */}
+      {mobileMenuOpen && (
+        <div className={`xl:hidden fixed inset-0 z-50 top-20 border-t flex flex-col p-6 animate-fade-in-up transition-colors ${
+          isDark 
+            ? 'bg-[#050D1A]/98 border-slate-800' 
+            : 'bg-white/98 border-slate-200'
+        }`}>
+          <div className="flex flex-col gap-3 font-display">
+            {[
+              { id: 'home', label: 'Corporate Home' },
+              { id: 'about', label: 'About Tasha' },
+              { id: 'services', label: 'Our Services' },
+              { id: 'projects', label: 'Completed & Ongoing' },
+              { id: 'careers', label: 'Careers Portal' },
+              { id: 'contact', label: 'Get in Touch' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setActiveTab(tab.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full py-3.5 px-4 rounded-xl text-left font-extrabold text-sm uppercase tracking-widest transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-amber-500 text-slate-950 border border-amber-400/50'
+                    : `bg-slate-800/10 hover:bg-slate-800/30 ${isDark ? 'text-gray-300' : 'text-slate-850'}`
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          
+          <div className="mt-auto border-t border-slate-800/40 pt-6 space-y-4 text-center">
+            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>Tasha Contracts India | Since 2015</p>
+            <button
+              onClick={() => {
+                setActiveTab('contact');
+                setMobileMenuOpen(false);
+              }}
+              className="w-full py-3 bg-amber-500 text-slate-950 font-bold text-xs uppercase tracking-widest rounded-xl shadow-md"
+            >
+              Apply for Contract
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* --- CORE TAB WORKFLOW VIEWS --- */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <AnimatePresence mode="wait">
+        
+        {/* ==============================================
+             1. HOME TAB VIEW 
+           ============================================== */}
+        {activeTab === 'home' && (
+          <motion.div 
+            key="home"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-20 animate-fade-in-up"
+          >
+            
+            {/* HERO BANNER - High-Contrast Left-Aligned Premium Construction Layout with Video Backdrop */}
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative rounded-3xl overflow-hidden min-h-[520px] md:min-h-[620px] flex items-center justify-start text-left p-8 md:p-16 border border-slate-800/20 shadow-2xl transition-all"
+            >
+              {/* Construction/Site work background video */}
+              <video 
+                key={systemInfo.heroVideoUrl || "https://res.cloudinary.com/dpxoxrnrd/video/upload/v1781097285/po6wg43tokovftxnpxfa.mp4"}
+                autoPlay 
+                loop 
+                muted 
+                playsInline 
+                preload="auto"
+                poster={systemInfo.heroPosterUrl || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1920&auto=format&fit=crop"}
+                className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
+                src={systemInfo.heroVideoUrl || "https://res.cloudinary.com/dpxoxrnrd/video/upload/v1781097285/po6wg43tokovftxnpxfa.mp4"}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-transparent"></div>
+              
+              {/* Vertical frame design accents */}
+              <div className="absolute inset-0 grid grid-cols-6 pointer-events-none opacity-5">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="border-r border-amber-500 h-full"></div>
+                ))}
+              </div>
+
+              <div className="relative z-10 max-w-2xl space-y-6 md:space-y-8">
+                
+                <motion.div 
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-[10px] font-extrabold uppercase tracking-widest"
+                >
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span>
+                  Pioneering Prefabricated Systems (Since 2015)
+                </motion.div>
+
+                <motion.h1 
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
+                  className="text-4xl sm:text-5xl lg:text-6xl font-black font-display leading-[1.08] text-white"
+                >
+                  Building Strong Foundations for the Future
+                </motion.h1>
+
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="text-sm md:text-base text-slate-300 leading-relaxed font-sans max-w-xl"
+                >
+                  {systemInfo.subheading || "Trusted residential & commercial construction experts delivering quality, safety, and on-time results across India circles."}
+                </motion.p>
+
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8, duration: 0.5 }}
+                  className="flex flex-col sm:flex-row items-center gap-4 pt-4"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveTab('contact')}
+                    className="w-full sm:w-auto px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest text-xs rounded-lg shadow-lg shadow-amber-500/10 border border-amber-400 cursor-pointer text-center"
+                  >
+                    Apply for Contract
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveTab('projects')}
+                    className="w-full sm:w-auto px-8 py-3.5 bg-transparent hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs rounded-lg border border-white/60 cursor-pointer text-center"
+                  >
+                    View Our Projects
+                  </motion.button>
+                </motion.div>
+
+                {/* Status bar detailing the page metrics */}
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                  className="pt-8 border-t border-slate-800/60 flex flex-wrap gap-4 md:gap-8 text-[10px] text-gray-400 font-mono font-bold uppercase tracking-widest"
+                >
+                  <span>● LGSF SYSTEM EXPERTS</span>
+                  <span>--- INDUSTRY COLLABORATORS ---</span>
+                  <span>● GOVERNMENT COMPLIANCE</span>
+                </motion.div>
+
+              </div>
+            </motion.section>
+
+            {/* OUR SERVICES - Beautiful Glassmorphic Deep Blue Grid (MM Builders theme) */}
+            <motion.section 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.1 } },
+                hidden: {}
+              }}
+              className="space-y-8 pt-4"
+            >
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                  }}
+                  className="space-y-2 text-left"
+                >
+                  <span className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.2em] block">
+                    INDUSTRIAL SPECIALTY
+                  </span>
+                  <h2 className="text-3xl font-black font-display tracking-tight text-white">
+                    Our Services
+                  </h2>
+                </motion.div>
+                <motion.button
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+                  }}
+                  onClick={() => setActiveTab('services')}
+                  className="text-xs font-black uppercase tracking-widest text-amber-500 hover:underline flex items-center gap-1.5 self-start cursor-pointer md:self-end"
+                >
+                  Explore All Capabilities <ChevronRight size={14} />
+                </motion.button>
+              </div>
+
+              {/* Service Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {services.slice(0, 6).map((service, i) => (
+                  <motion.div 
+                    key={service.id || i}
+                    variants={{
+                      hidden: { opacity: 0, y: 30 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                    }}
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    className="p-6 md:p-8 rounded-xl bg-[#141E30] border border-slate-800/65 hover:border-amber-500/35 hover:bg-[#19253C] transition-all duration-300 flex flex-col justify-between group cursor-pointer shadow-xl"
+                    onClick={() => setActiveTab('services')}
+                  >
+                    <div className="space-y-4">
+                      {/* White simple icon top of card */}
+                      <div className="w-12 h-12 flex items-center justify-center bg-amber-500/10 border border-amber-500/20 text-white rounded-lg p-3">
+                        <DynamicIcon name={service.iconName} size={22} />
+                      </div>
+                      <h3 className="text-lg font-bold font-display text-white group-hover:text-amber-500 transition-colors">
+                        {service.name}
+                      </h3>
+                      <p className="text-xs text-slate-300 leading-relaxed font-sans line-clamp-2">
+                        {service.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-4 mt-6 border-t border-slate-800/60 flex items-center justify-between text-[11px] font-medium text-slate-400">
+                      <span>{service.features ? service.features[0] : 'High Quality Execution'}</span>
+                      <span className="text-amber-500 font-extrabold group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
+
+            {/* WHY CHOOSE US - High-Contrast Pristine Light-Slate Segment (Alternating Look) */}
+            <motion.section 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="rounded-3xl bg-[#F8FAFC] border border-slate-200 text-slate-900 p-8 md:p-12 shadow-md transition-all"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+                
+                {/* Left Side: Handsome Civil Engineer Blueprints Image (MM Builders style) */}
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="lg:col-span-5 relative h-80 md:h-[420px] rounded-2xl overflow-hidden shadow-lg border border-slate-300 bg-slate-200"
+                >
+                  <img 
+                    src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781122254/r8abeqly5cbung126iay.jpg" 
+                    alt="Pioneering Civil Engineer" 
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-cover mix-blend-normal hover:scale-105 transition-all duration-500"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-6 text-white text-left">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-amber-500 font-mono">TASHAS SUPERVISION</p>
+                    <p className="text-xs font-bold leading-relaxed">{systemInfo.address || "Dhakka Road, Amroha (U.P) India"}</p>
+                  </div>
+                </motion.div>
+
+                {/* Right Side: High-Contrast Value Cards (MM Builders Mock) */}
+                <motion.div 
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true }}
+                  variants={{
+                    visible: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
+                    hidden: {}
+                  }}
+                  className="lg:col-span-7 space-y-6 text-left"
+                >
+                  <motion.div 
+                    variants={{
+                      hidden: { opacity: 0, x: 20 },
+                      visible: { opacity: 1, x: 0, transition: { duration: 0.5 } }
+                    }}
+                    className="space-y-2"
+                  >
+                    <span className="text-[10px] font-black uppercase text-amber-600 tracking-[0.25em] block">
+                      WHY CHOOSE TASHA CONTRACTS
+                    </span>
+                    <h3 className="text-3xl font-black font-display tracking-tight text-slate-900">
+                      Uncompromised Standards, Flawless Delivery
+                    </h3>
+                    <p className="text-xs text-slate-600 max-w-xl leading-relaxed">
+                      Established under Mr Talib Choudhary in 2015, Tasha Contracts India tackles complex terrain parameters and structural blueprints through pre-engineered light gauge panels.
+                    </p>
+                  </motion.div>
+
+                  {/* Vertically stacked high contrast badge list blocks */}
+                  <div className="space-y-3">
+                    
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md hover:border-amber-400/50 transition-all shadow-sm"
+                    >
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+                        <Award size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">10+ Years of Punctual Experience</h4>
+                        <p className="text-[11px] text-slate-500 leading-normal">Registered in 2015, operating with deep efficiency in complex Indian infrastructure circles.</p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md hover:border-amber-400/50 transition-all shadow-sm"
+                    >
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+                        <ShieldCheck size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">Licensed & Government Approved</h4>
+                        <p className="text-[11px] text-slate-500 leading-normal">Fully certified MSME, GST Registered with Class-A engineering safety and compliance ratios.</p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md hover:border-amber-400/50 transition-all shadow-sm"
+                    >
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+                        <Users size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">Skilled Expert Assembly Team</h4>
+                        <p className="text-[11px] text-slate-500 leading-normal">We respect our builders, completely eradicating manpower, labor, or coordination problems on-site.</p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md hover:border-amber-400/50 transition-all shadow-sm"
+                    >
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+                        <Layers size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">High-Performance raw LGSF Steel</h4>
+                        <p className="text-[11px] text-slate-500 leading-normal">Precision-engineered framing materials, immune to wind damage, seismic events, or heavy subzero snowloads.</p>
+                      </div>
+                    </motion.div>
+
+                    <motion.div 
+                      variants={{
+                        hidden: { opacity: 0, y: 15 },
+                        visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:shadow-md hover:border-amber-400/50 transition-all shadow-sm"
+                    >
+                      <div className="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-amber-600">
+                        <Clock size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-sm text-slate-900">Guaranteed On-Time Handover</h4>
+                        <p className="text-[11px] text-slate-500 leading-normal">Punctual execution that completes assemblies up to 70% faster than dynamic brick-and-mortar projects.</p>
+                      </div>
+                    </motion.div>
+
+                  </div>
+
+                </motion.div>
+
+              </div>
+            </motion.section>
+
+            {/* KEY METRICS AND COUNTERS */}
+            <section className="space-y-6">
+              <div className="text-center max-w-2xl mx-auto space-y-2">
+                <span className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.2em] block">
+                  STATISTICS
+                </span>
+                <h3 className="text-3xl font-black font-display tracking-tight text-white">
+                  Engineering Growth In Numbers
+                </h3>
+              </div>
+              <StatsCounter themeMode={themeMode} systemInfo={systemInfo} />
+            </section>
+
+            {/* OUR PROJECTS - Clean Horizontal Gallery cards with bottom title text overlays */}
+            <motion.section 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.1 } },
+                hidden: {}
+              }}
+              className="space-y-8"
+            >
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                  }}
+                  className="space-y-2 text-left"
+                >
+                  <span className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.2em] block">
+                    COMPLETED & ACTIVE MONUMENTS
+                  </span>
+                  <h2 className="text-3xl font-black font-display tracking-tight text-white">
+                    Our Projects
+                  </h2>
+                </motion.div>
+                <motion.button
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+                  }}
+                  onClick={() => setActiveTab('projects')}
+                  className="text-xs font-black uppercase tracking-widest text-amber-500 hover:underline flex items-center gap-1.5 self-start cursor-pointer md:self-end"
+                >
+                  View All Exhibits <ChevronRight size={14} />
+                </motion.button>
+              </div>
+
+              {/* Grid with 4 beautiful columns featuring Tasha projects */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {projects.slice(0, 4).map((project, idx) => (
+                  <motion.div 
+                    key={project.id || idx}
+                    variants={{
+                      hidden: { opacity: 0, scale: 0.9, y: 20 },
+                      visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.5 } }
+                    }}
+                    onClick={() => {
+                      setActivePopupProject(project);
+                    }}
+                    className="relative h-64 md:h-72 rounded-xl overflow-hidden cursor-pointer group shadow-xl border border-slate-800/40"
+                  >
+                    <img 
+                      src={project.image} 
+                      alt={project.title} 
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-955 to-transparent"></div>
+                    
+                    <span className="absolute top-3 left-3 px-2 py-0.5 bg-slate-950/80 border border-slate-800 text-[8px] font-mono font-bold uppercase rounded-full text-amber-500">
+                      {project.status === 'Completed' ? 'Completed Works' : 'Ongoing Site Work'}
+                    </span>
+
+                    <div className="absolute bottom-4 left-4 right-4 text-left">
+                      <p className="text-[9px] text-amber-400 font-bold uppercase tracking-wider mb-0.5">{project.category}</p>
+                      <h4 className="text-sm font-black text-white leading-snug drop-shadow-md truncate">
+                        {project.title}
+                      </h4>
+                      <p className="text-[10px] text-slate-300 font-semibold flex items-center gap-1 mt-1 truncate">
+                        <MapPin size={11} className="text-amber-500 shrink-0" />
+                        {project.location}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Centered Outline Trigger Button */}
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="text-center pt-2"
+              >
+                <button
+                  onClick={() => setActiveTab('projects')}
+                  className="px-6 py-2.5 bg-transparent hover:bg-white/5 border border-slate-700 text-white font-bold uppercase tracking-widest text-[10px] rounded-lg cursor-pointer transition-all inline-flex items-center gap-2"
+                >
+                  View All Projects <ChevronRight size={12} className="text-amber-500" />
+                </button>
+              </motion.div>
+            </motion.section>
+
+            {/* CLIENT TESTIMONIALS - Dark Cards with Gold highlight strip */}
+            <motion.section 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.1 } },
+                hidden: {}
+              }}
+              className="space-y-8"
+            >
+              <div className="text-center max-w-2xl mx-auto space-y-2">
+                <motion.span 
+                  variants={{
+                    hidden: { opacity: 0, y: 15 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+                  }}
+                  className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.2em] block"
+                >
+                  CLIENT SATISFACTION
+                </motion.span>
+                <motion.h3 
+                  variants={{
+                    hidden: { opacity: 0, y: 15 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } }
+                  }}
+                  className="text-3xl font-black font-display tracking-tight text-white"
+                >
+                  Client Testimonials
+                </motion.h3>
+              </div>
+
+              {/* 3 cards side by side */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {testimonials.filter(t => t.approved !== false).slice(0, 6).map((testimonial, i) => (
+                  <motion.div 
+                    key={testimonial.id || i}
+                    variants={{
+                      hidden: { opacity: 0, y: 30 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                    }}
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    className="p-6 md:p-8 rounded-xl bg-[#141E30] border border-slate-800/80 text-left relative flex flex-col justify-between shadow-xl"
+                  >
+                    <div className="space-y-4">
+                      {/* Rating stars */}
+                      <div className="flex gap-1 text-amber-400">
+                        {[...Array(testimonial.rating || 5)].map((_, starIdx) => (
+                          <Star key={starIdx} size={14} fill="currentColor" />
+                        ))}
+                      </div>
+
+                      <p className="text-xs text-slate-300 leading-relaxed italic font-medium font-sans">
+                        "{testimonial.text}"
+                      </p>
+                    </div>
+
+                    {/* Profile layout */}
+                    <div className="pt-6 mt-6 border-t border-slate-800/60">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-500 text-xs font-bold font-display uppercase">
+                          {testimonial.clientName.charAt(0) || 'E'}
+                        </div>
+                        <div>
+                          <h4 className="font-extrabold text-sm text-white">{testimonial.clientName}</h4>
+                          <p className="text-[10px] text-amber-500 font-bold tracking-wider uppercase font-mono mt-0.5">{testimonial.companyName || 'Corporate Client'}</p>
+                        </div>
+                      </div>
+
+                      {/* Small Gold accent indicator bar sitting below profile details */}
+                      <div className="h-1 w-12 bg-amber-500 rounded mt-4"></div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Share Experience Feedback Submission Panel */}
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="pt-4 pb-2"
+              >
+                <AddTestimonialForm 
+                  onAddTestimonial={(newTest) => updateTestimonials([newTest, ...testimonials])} 
+                  isDark={themeMode === 'dark' || true} 
+                />
+              </motion.div>
+
+              {/* Centered Trigger Button */}
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                }}
+                className="text-center pt-2"
+              >
+                <button
+                  onClick={() => setActiveTab('contact')}
+                  className="px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest text-xs rounded-lg transition-all shadow-lg hover:shadow-amber-500/20 border border-amber-400 cursor-pointer"
+                >
+                  Apply for Contract
+                </button>
+              </motion.div>
+            </motion.section>
+
+            {/* TRUSTED CLIENT SLIDER LOGOS FROM PDF PAGE 4 */}
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="p-8 rounded-2xl border border-slate-800/50 bg-[#0e1726]/60 text-center space-y-6 shadow-md"
+            >
+              <h4 className="text-[9px] uppercase font-black text-amber-500 tracking-[0.25em]">
+                PARTNERING WITH THE BEST IN INDUSTRY
+              </h4>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 items-center justify-items-center opacity-90 font-display">
+                <div className="p-4 border border-slate-800 bg-[#070d19]/90 rounded-xl w-full text-center space-y-1 hover:border-amber-500/20 transition-all">
+                  <p className="text-xs font-black tracking-widest text-white">EVEREST</p>
+                  <span className="text-[8px] block text-red-500 uppercase font-black font-mono">Everest Industries</span>
+                </div>
+                <div className="p-4 border border-slate-800 bg-[#070d19]/90 rounded-xl w-full text-center space-y-1 hover:border-amber-500/20 transition-all">
+                  <p className="text-xs font-black tracking-widest text-white">AHLUWALIA</p>
+                  <span className="text-[8px] block text-amber-600 uppercase font-black font-mono">Contracts (India) Ltd</span>
+                </div>
+                <div className="p-4 border border-slate-800 bg-[#070d19]/90 rounded-xl w-full text-center space-y-1 hover:border-amber-500/20 transition-all">
+                  <p className="text-xs font-black tracking-widest text-white">EPACK</p>
+                  <span className="text-[8px] block text-cyan-500 uppercase font-black font-mono">Prefab QuickBuild</span>
+                </div>
+                <div className="p-4 border border-slate-800 bg-[#070d19]/90 rounded-xl w-full text-center space-y-1 hover:border-amber-500/20 transition-all">
+                  <p className="text-xs font-black tracking-widest text-white">NEST-IN</p>
+                  <span className="text-[8px] block text-emerald-500 uppercase font-black font-mono">Tata Steel Tech</span>
+                </div>
+                <div className="p-4 border border-slate-800 bg-[#070d19]/90 rounded-xl w-full text-center space-y-1 hover:border-amber-500/20 transition-all">
+                  <p className="text-xs font-black tracking-widest text-white">PASA</p>
+                  <span className="text-[8px] block text-yellow-600 uppercase font-black font-mono">Bonding Precision</span>
+                </div>
+              </div>
+            </motion.section>
+
+            {/* PLANNING A CONSTRUCTION PROJECT? Full-width Sunset/Steel framework banner CTA */}
+            <motion.section 
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7 }}
+              className="relative rounded-3xl overflow-hidden p-8 md:p-12 border border-slate-800/40 shadow-2xl bg-black"
+            >
+              <div 
+                className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity" 
+                style={{ backgroundImage: `url('${systemInfo.ctaBgUrl || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200"}')` }}
+              ></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950 to-slate-950/60"></div>
+              
+              <div className="relative z-10 max-w-2xl mx-auto text-center space-y-6">
+                <h3 className="text-2xl md:text-3xl font-black font-display text-white">
+                  Planning a Construction Project?
+                </h3>
+                <p className="text-xs leading-relaxed text-slate-300 font-sans max-w-lg mx-auto">
+                  Let Tasha Contracts bring your engineering vision to active reality, optimized under governmental safety mandates and class-A steel tolerances.
+                </p>
+                <div className="pt-2">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveTab('contact')}
+                    className="px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black uppercase tracking-widest text-xs rounded-lg transition-all shadow-md inline-block cursor-pointer"
+                  >
+                    Apply for Contract
+                  </motion.button>
+                </div>
+              </div>
+            </motion.section>
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             2. ABOUT US TAB VIEW 
+           ============================================== */}
+        {activeTab === 'about' && (
+          <motion.div 
+            key="about"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 animate-fade-in-up"
+          >
+            
+            {/* Header Slogan */}
+            <div className={`pb-5 max-w-3xl space-y-2 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+              <h2 className={`text-3xl md:text-4xl font-extrabold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                About Tasha
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Text Block derived directly from brochure Page 2 */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className={`p-6 border rounded-2xl space-y-4 ${
+                  isDark 
+                    ? 'bg-slate-800/15 border-amber-500/10' 
+                    : 'bg-white border-slate-205 shadow-md'
+                }`}>
+                  <h3 className={`text-lg font-bold font-display border-l-3 border-amber-500 pl-2.5 ${isDark ? 'text-amber-400' : 'text-amber-700'}`}>
+                    Tasha official record
+                  </h3>
+
+                  <p className={`text-sm md:text-base leading-relaxed italic ${isDark ? 'text-gray-300' : 'text-slate-650'}`}>
+                    "Tasha Contracts India was established in the year 2015 as per the requirement of the market. Due to work efficiency and punctuality, it also got working space in the market."
+                  </p>
+                  
+                  <p className={`text-sm md:text-base leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-650'}`}>
+                    "Tasha Contracts India specializes in floor to ceiling prefabricated building, developed a complete family by respecting the workers and got rid of all the manpower related problems."
+                  </p>
+
+                  <p className={`text-sm md:text-base leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-650'}`}>
+                    "The next goal of Tasha Contracts India was hard work to satisfy the customer. Working strategy prioritizing quality managed to satisfy customer, Tasha Contracts India kept a close watch on each of their projects and tackled every problem encountered on the site, learned from those problems and achieved success."
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={`p-5 rounded-xl space-y-2 ${isDark ? 'bg-slate-800/10' : 'bg-white border border-slate-200 shadow-sm'}`}>
+                    <h4 className="font-bold text-amber-500 uppercase tracking-widest text-xs">Our Core Values</h4>
+                    <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>
+                      Absolute site compliance, zero-compromise engineering steel raw materials, strict employee safety guidelines, and active project budget controls.
+                    </p>
+                  </div>
+                  <div className={`p-5 rounded-xl space-y-2 ${isDark ? 'bg-slate-800/10' : 'bg-white border border-slate-200 shadow-sm'}`}>
+                    <h4 className="font-bold text-amber-500 uppercase tracking-widest text-xs">Our Delivery Vision</h4>
+                    <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>
+                      Sustainably accelerating construction timelines across India by pioneering prefabricated LGSF framing systems that bypass dynamic weather/terrain constraints.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* MD Portrait / Corporate Card */}
+              <div className="lg:col-span-5 space-y-6">
+                <div className={`border p-6 rounded-2xl text-center space-y-4 ${
+                  isDark ? 'bg-slate-800/10 border-slate-700/30' : 'bg-white border-slate-200 shadow-md'
+                }`}>
+                  {/* Optimized Custom Portrait View Node */}
+                  <div className={`relative mx-auto border border-amber-500/30 overflow-hidden flex items-center justify-center shadow-lg transition-all duration-300 ${
+                    systemInfo.founderImageShape === 'portrait-card' 
+                      ? 'w-38 h-48 rounded-2xl' 
+                      : systemInfo.founderImageShape === 'squircle'
+                      ? 'w-38 h-38 rounded-3xl'
+                      : 'w-36 h-36 rounded-full'
+                  } ${
+                    isDark ? 'bg-slate-900/60' : 'bg-slate-50'
+                  }`}>
+                    <img 
+                      src={systemInfo.founderImage || "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400"} 
+                      alt={(systemInfo.founderName || "Mohd Arshad") + " MD"}
+                      referrerPolicy="no-referrer"
+                      className={`w-full h-full transition-transform duration-300 ${
+                        systemInfo.founderImageFit === 'contain' 
+                          ? 'object-contain p-1.5' 
+                          : systemInfo.founderImageFit === 'top'
+                          ? 'object-cover object-top'
+                          : 'object-cover object-center'
+                      }`} 
+                    />
+                  </div>
+                  <div>
+                    <h4 className={`font-display font-extrabold text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {systemInfo.founderName || "Mohd Arshad"}
+                    </h4>
+                    <p className="text-xs text-amber-600 uppercase font-bold">
+                      {systemInfo.founderRole || "Managing Director & Founder"}
+                    </p>
+                  </div>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    {systemInfo.founderBio || '"Establishing Tasha Contracts India in 2015 meant building an ethical construction collective respect for labor, punctuality, and pioneering state-of-the-art pre-engineered structural steel foundations."'}
+                  </p>
+                  <span className={`block px-3 py-1.5 text-[10px] font-mono rounded-lg border ${
+                    isDark ? 'bg-slate-900 border-slate-800 text-gray-400' : 'bg-slate-50 border-slate-200 text-slate-600'
+                  }`}>
+                    {systemInfo.founderLocation || "Amroha Uttar Pradesh, India Circle"}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             3. SERVICES SEGMENT VIEW 
+           ============================================== */}
+        {activeTab === 'services' && (
+          <motion.div 
+            key="services"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 animate-fade-in-up"
+          >
+            
+            <div className={`pb-5 max-w-3xl space-y-2 border-b ${isDark ? 'border-slate-850' : 'border-slate-200'}`}>
+              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
+                Industrial Capabilities
+              </span>
+              <h2 className={`text-3xl md:text-4xl font-extrabold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Turnkey Structural Contracting & Engineering
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {services.map((service) => (
+                <div 
+                  key={service.id} 
+                  className={`p-6 rounded-2xl space-y-4 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group border ${
+                    isDark 
+                      ? 'bg-slate-800/10 border-slate-700/30' 
+                      : 'bg-white border-slate-200 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  <div className="space-y-3">
+                    <div className={`w-12 h-12 flex items-center justify-center rounded-xl p-3 border transition-colors ${
+                      isDark 
+                        ? 'bg-slate-900 border-slate-700 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950' 
+                        : 'bg-amber-50 border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-slate-950'
+                    }`}>
+                      <DynamicIcon name={service.iconName} size={22} />
+                    </div>
+
+                    <h3 className={`text-xl font-bold font-display group-hover:text-amber-500 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      {service.name}
+                    </h3>
+
+                    <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-650 font-medium'}`}>
+                      {service.description}
+                    </p>
+
+                    <div className={`p-3 rounded-lg border text-[11px] ${
+                      isDark ? 'bg-slate-900/30 border-slate-800/50 text-gray-405' : 'bg-slate-50 border-slate-150 text-slate-600'
+                    }`}>
+                      <strong>Scope:</strong> {service.details}
+                    </div>
+                  </div>
+
+                  <div className={`pt-4 border-t space-y-2 ${isDark ? 'border-slate-800/50' : 'border-slate-150'}`}>
+                    <span className="text-[10px] uppercase font-extrabold text-amber-500 tracking-widest block">
+                      Guarantees:
+                    </span>
+                    <ul className="space-y-1.5 text-xs">
+                      {service.features.map((feature, i) => (
+                        <li key={i} className={`flex items-center gap-1.5 ${isDark ? 'text-gray-450' : 'text-slate-600 font-bold'}`}>
+                          <CheckCircle2 size={12} className="text-emerald-500" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+
+            {/* Quote Request CTA section */}
+            <div className={`p-8 text-center rounded-2xl max-w-3xl mx-auto space-y-4 border ${
+              isDark 
+                ? 'bg-slate-850/20 border-amber-500/10' 
+                : 'bg-white border-slate-205 shadow-md'
+            }`}>
+              <h3 className={`text-lg font-bold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>Require Custom CAD Design Estimations?</h3>
+              <p className={`text-xs leading-relaxed max-w-xl mx-auto ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                Tasha Contracts India implements deep compliance engineering audits. Let our Estimations Office review your blueprints and budget criteria to form a proposal.
+              </p>
+              <button
+                onClick={() => setActiveTab('contact')}
+                className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer shadow-sm transition-all"
+              >
+                Launch Estimate Builder
+              </button>
+            </div>
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             4. PROJECTS GALLERY VIEW WITH DETAILED POPUP 
+           ============================================== */}
+        {activeTab === 'projects' && (
+          <motion.div 
+            key="projects"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-10 animate-fade-in-up"
+          >
+            
+            <div className={`flex flex-col md:flex-row md:items-end justify-between gap-4 pb-5 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+              <div>
+                <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
+                  Site Portfolios
+                </span>
+                <h2 className={`text-3xl md:text-4xl font-extrabold font-display mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  National Construction Exhibits
+                </h2>
+                <p className={`text-xs mt-1 ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>
+                  Toggle completed or actual ongoing sites specified directly in the Tasha brochure
+                </p>
+              </div>
+
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap gap-1.5 pt-2">
+                {uniqueCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setProjectFilterCategory(cat)}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-colors cursor-pointer ${
+                      projectFilterCategory === cat 
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow' 
+                        : isDark 
+                          ? 'bg-slate-800/40 text-gray-400 hover:bg-slate-800'
+                          : 'bg-white border border-slate-205 text-slate-700 hover:bg-slate-100 shadow-sm'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Search and Filters Segment */}
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+              <div className="relative w-full md:max-w-md">
+                <input 
+                  type="text" 
+                  value={projectSearchQuery}
+                  onChange={(e) => setProjectSearchQuery(e.target.value)}
+                  placeholder="Search projects by name, location, or client..."
+                  className={`w-full pl-9 pr-4 py-2.5 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
+                    isDark 
+                      ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                      : 'bg-white border border-slate-205 text-slate-800 focus:border-amber-500 focus:bg-slate-50'
+                  }`}
+                />
+                <Search size={14} className="absolute left-3.5 top-3.5 text-gray-400" />
+              </div>
+
+              <div className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>
+                <span>Displaying <strong>{filteredProjects.length}</strong> of <strong>{projects.length}</strong> construction portfolios</span>
+              </div>
+            </div>
+
+            {/* Main Projects Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProjects.map((project) => (
+                <div 
+                  key={project.id}
+                  onClick={() => setActivePopupProject(project)}
+                  className={`rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 group flex flex-col justify-between border ${
+                    isDark 
+                      ? 'bg-slate-800/10 border-slate-700/20 hover:border-amber-500/30' 
+                      : 'bg-white border-slate-205 hover:border-amber-500/40 shadow-md hover:shadow-lg'
+                  }`}
+                >
+                  <div className="relative h-48 overflow-hidden bg-slate-900">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-350" 
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                    
+                    <span className="absolute top-3 left-3 px-2.5 py-0.5 bg-slate-950/80 border border-slate-800 text-[9px] font-mono font-bold uppercase rounded-full text-amber-500">
+                      {project.status === 'Completed' ? 'Completed' : 'Ongoing Site Work'}
+                    </span>
+                  </div>
+
+                  <div className="p-5 space-y-3 flex-grow flex flex-col justify-between">
+                    <div className="space-y-1">
+                      <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md ${
+                        isDark ? 'text-amber-400 bg-amber-500/5' : 'text-amber-700 bg-amber-50 border border-amber-200/40'
+                      }`}>
+                        {project.category}
+                      </span>
+                      <h4 className={`text-lg font-bold font-display pt-1 line-clamp-1 ${isDark ? 'text-white' : 'text-slate-950 font-extrabold'}`}>
+                        {project.title}
+                      </h4>
+                      <p className={`text-xs flex items-center gap-1 ${isDark ? 'text-slate-400' : 'text-slate-500 font-medium'}`}>
+                        <MapPin size={12} className="text-amber-500" />
+                        {project.location}
+                      </p>
+                    </div>
+
+                    <p className={`text-xs pt-2 line-clamp-2 leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                      {project.description}
+                    </p>
+
+                    <div className={`pt-3 border-t flex items-center justify-between text-[11px] ${
+                      isDark ? 'border-slate-800/60' : 'border-slate-150'
+                    }`}>
+                      <div>
+                        <span className={`block uppercase tracking-wider text-[9px] ${isDark ? 'text-gray-400' : 'text-slate-500 font-bold'}`}>Authority:</span>
+                        <span className={`font-semibold truncate max-w-[120px] block ${isDark ? 'text-white' : 'text-slate-850'}`}>{project.client}</span>
+                      </div>
+                      
+                      <span className={`font-extrabold group-hover:underline flex items-center gap-1 cursor-pointer ${
+                        isDark ? 'text-amber-400' : 'text-amber-700'
+                      }`}>
+                        View Details
+                        <ArrowUpRight size={13} />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Zero state matches */}
+            {filteredProjects.length === 0 && (
+              <div className={`p-12 text-center text-xs rounded-2xl max-w-lg mx-auto border ${
+                isDark ? 'bg-slate-800/10 border-slate-800 text-gray-400' : 'bg-slate-50 border-slate-200 text-slate-500'
+              }`}>
+                No projects matched your specified search query or category pills. Consider refreshing filter controls.
+              </div>
+            )}
+
+            {/* Project Details Modal Popup */}
+            {activePopupProject && (
+              <ProjectDetailsPopup 
+                project={activePopupProject} 
+                onClose={() => setActivePopupProject(null)} 
+                themeMode={themeMode}
+              />
+            )}
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             6. HR CAREER VACANCY PORTAL VIEW 
+           ============================================== */}
+        {activeTab === 'careers' && (
+          <motion.div 
+            key="careers"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-10 animate-fade-in-up"
+          >
+            
+            <div className={`pb-5 max-w-3xl space-y-2 border-b ${isDark ? 'border-slate-850' : 'border-slate-200'}`}>
+              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
+                Employment Center
+              </span>
+              <h2 className={`text-3xl md:text-4xl font-extrabold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Join Tasha Contracts India Team
+              </h2>
+              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>
+                Punctuality, respect, and mutual growth. Register your candidacy to direct future civil developments.
+              </p>
+            </div>
+
+            <CareersSection careers={careers} onApply={handleCareerApply} themeMode={themeMode} />
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             7. CONTACT US / WA / G-MAP PORTAL VIEW 
+           ============================================== */}
+        {activeTab === 'contact' && (
+          <motion.div 
+            key="contact"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 animate-fade-in-up"
+          >
+            
+            <div className={`pb-5 max-w-3xl space-y-2 border-b ${isDark ? 'border-slate-850' : 'border-slate-200'}`}>
+              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
+                Immediate Coordinates
+              </span>
+              <h2 className={`text-3xl md:text-4xl font-extrabold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Let's Outline Your Structural Vision
+              </h2>
+              <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>
+                Whether a municipal bidding process or an eco-lodge project, our estimators are available.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Contact Information Cards Column */}
+              <div className="lg:col-span-4 space-y-4">
+                
+                <div className={`p-5 border rounded-2xl space-y-3.5 ${
+                  isDark ? 'bg-slate-800/10 border-slate-700/30' : 'bg-white border-slate-200 shadow-md'
+                }`}>
+                  <h3 className="text-sm font-black uppercase tracking-wider text-amber-600">Contact Channels</h3>
+                  
+                  <div className="space-y-3 text-xs">
+                    <div className="flex items-start gap-2.5">
+                      <MapPin size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className={isDark ? 'text-white': 'text-slate-950 font-bold'}>Address (Brochure official):</strong>
+                        <p className={`mt-1 ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>{systemInfo.address}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2.5">
+                      <Mail size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className={isDark ? 'text-white': 'text-slate-950 font-bold'}>Email Address:</strong>
+                        <p className="text-amber-600 mt-0.5 font-bold hover:underline">
+                          <a href={`mailto:${systemInfo.email}`}>{systemInfo.email}</a>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2.5">
+                      <Phone size={16} className="text-amber-500 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className={isDark ? 'text-white': 'text-slate-950 font-bold'}>Call Center:</strong>
+                        <p className={`mt-0.5 font-bold ${isDark ? 'text-gray-300' : 'text-slate-800'}`}>{systemInfo.phone}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Business operating hours */}
+                <div className={`p-5 rounded-2xl text-xs space-y-2 border ${
+                  isDark ? 'bg-slate-800/10 border-slate-800 text-white' : 'bg-white border-slate-200 shadow-md text-slate-805'
+                }`}>
+                  <h4 className={`font-bold uppercase font-display ${isDark ? 'text-white' : 'text-slate-950 text-sm'}`}>Operating Hours</h4>
+                  <p className={isDark ? 'text-gray-400' : 'text-slate-650'}>{systemInfo.workingHours}</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-bold">Emergency Support: 24/7 client hotline</p>
+                </div>
+
+                {/* Mock Google Map Simulator */}
+                <div className={`p-4 rounded-2xl text-xs border space-y-3 ${
+                  isDark ? 'bg-slate-800/10 border-slate-800Text' : 'bg-white border-slate-200 shadow-md'
+                }`}>
+                  <h4 className={`font-bold uppercase flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <MapPin size={14} className="text-amber-500" /> Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh)
+                  </h4>
+                  
+                  <div className={`h-44 border rounded-xl relative overflow-hidden flex items-center justify-center text-center p-4 ${
+                    isDark ? 'bg-slate-900 border-slate-750' : 'bg-slate-100 border-slate-205'
+                  }`}>
+                    <div className="absolute inset-0 opacity-15 bg-cover" style={{ backgroundImage: `url('${systemInfo.mapBgUrl || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=400"}')` }}></div>
+                    <div className="relative z-10 space-y-2">
+                      <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-bold text-[9px] uppercase rounded">MAP SATELLITE</span>
+                      <p className={`text-[10px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
+                        Tasha Contracts Corporate Headquarters & Estimation Workshop. Near National Highway Transit, Uttar Pradesh, India.
+                      </p>
+                      <button 
+                        onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(systemInfo.address)}`, '_blank')}
+                        className={`text-[10px] font-black uppercase hover:underline ${isDark ? 'text-amber-400' : 'text-indigo-600'}`}
+                      >
+                        Open In Google Maps External ↗
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Professional Inquiry Estimating Form Column */}
+              <div className="lg:col-span-8 space-y-8">
+                
+                {/* 1. Bid Estimator Quote form */}
+                <QuoteForm onQuoteSubmit={handleQuoteSubmit} themeMode={themeMode} />
+
+                {/* 2. Direct Support Email form */}
+                <form onSubmit={handleContactSubmit} className={`p-6 border rounded-2xl space-y-4 text-left ${
+                  isDark ? 'bg-slate-800/10 border-slate-800' : 'bg-white border-slate-200/80 shadow-md'
+                }`}>
+                  <h4 className={`text-sm font-bold font-display uppercase border-l-2 border-amber-500 pl-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Send General Email Message
+                  </h4>
+
+                  {contactStatus === 'success' && (
+                    <div className="p-3 bg-emerald-500/15 text-emerald-350 text-xs rounded border border-emerald-500/35 flex items-center gap-2 font-bold">
+                      <CheckCircle2 size={16} />
+                      <span>Message sent! Our customer office will call or email you soon.</span>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input 
+                      type="text" 
+                      required
+                      placeholder="Your Name *"
+                      value={contactForm.name}
+                      onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                      className={`w-full px-3.5 py-2.5 rounded text-xs transition-colors focus:ring-1 focus:ring-amber-500/20 focus:outline-none ${
+                        isDark 
+                          ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                          : 'bg-slate-50 border border-slate-200 text-slate-900 focus:border-amber-500 focus:bg-white'
+                      }`}
+                    />
+                    <input 
+                      type="email" 
+                      required
+                      placeholder="Email Address *"
+                      value={contactForm.email}
+                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                      className={`w-full px-3.5 py-2.5 rounded text-xs transition-colors focus:ring-1 focus:ring-amber-500/20 focus:outline-none ${
+                        isDark 
+                          ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                          : 'bg-slate-50 border border-slate-200 text-slate-900 focus:border-amber-500 focus:bg-white'
+                      }`}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input 
+                      type="text" 
+                      placeholder="Mobile Number"
+                      value={contactForm.mobile}
+                      onChange={(e) => setContactForm({ ...contactForm, mobile: e.target.value })}
+                      className={`w-full px-3.5 py-2.5 rounded text-xs transition-colors focus:ring-1 focus:ring-amber-500/20 focus:outline-none ${
+                        isDark 
+                          ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                          : 'bg-slate-50 border border-slate-200 text-slate-900 focus:border-amber-500 focus:bg-white'
+                      }`}
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Subject / Work Area"
+                      value={contactForm.subject}
+                      onChange={(e) => setContactForm({ ...contactForm, subject: e.target.value })}
+                      className={`w-full px-3.5 py-2.5 rounded text-xs transition-colors focus:ring-1 focus:ring-amber-500/20 focus:outline-none ${
+                        isDark 
+                          ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                          : 'bg-slate-50 border border-slate-200 text-slate-900 focus:border-amber-500 focus:bg-white'
+                      }`}
+                    />
+                  </div>
+
+                  <textarea 
+                    rows={2}
+                    required
+                    placeholder="Describe your message or questions *"
+                    value={contactForm.message}
+                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                    className={`w-full px-3.5 py-2.5 rounded text-xs transition-colors focus:ring-1 focus:ring-amber-500/20 focus:outline-none ${
+                      isDark 
+                        ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
+                        : 'bg-slate-50 border border-slate-200 text-slate-900 focus:border-amber-500 focus:bg-white'
+                    }`}
+                  />
+
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-extrabold rounded uppercase tracking-wider cursor-pointer"
+                  >
+                    Send Email Message
+                  </button>
+                </form>
+
+              </div>
+
+            </div>
+
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             8. ADMIN CONFIGURATION WORKFLOW VIEW
+           ============================================== */}
+        {activeTab === 'admin' && (
+          <motion.div 
+            key="admin"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="animate-fade-in-up"
+          >
+            <AdminPanel 
+              projects={projects}
+              services={services}
+              testimonials={testimonials}
+              team={team}
+              certificates={certificates}
+              careers={careers}
+              quotes={quotes}
+              contacts={contacts}
+              applications={applications}
+              systemInfo={systemInfo}
+              onUpdateProjects={updateProjects}
+              onUpdateServices={updateServices}
+              onUpdateTestimonials={updateTestimonials}
+              onUpdateTeam={updateTeam}
+              onUpdateCertificates={updateCertificates}
+              onUpdateCareers={updateCareers}
+              onUpdateQuotes={updateQuotes}
+              onUpdateContacts={updateContacts}
+              onUpdateSystemInfo={updateSystemInfo}
+            />
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             WEB MANAGER (MEDIA) PORTAL VIEW
+           ============================================== */}
+        {activeTab === 'webmanager' && (
+          <motion.div 
+            key="webmanager"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="animate-fade-in-up"
+          >
+            <WebMediaManager 
+              systemInfo={systemInfo}
+              projects={projects}
+              team={team}
+              onUpdateSystemInfo={updateSystemInfo}
+              onUpdateProjects={updateProjects}
+              onUpdateTeam={updateTeam}
+            />
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             9. PRIVACY POLICY PAGE
+           ============================================== */}
+        {activeTab === 'privacy' && (
+          <motion.div 
+            key="privacy"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 animate-fade-in-up"
+          >
+            {/* Header Slogan */}
+            <div className={`pb-6 max-w-3xl space-y-3 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider flex items-center gap-1.5">
+                <Lock size={12} /> Confidentiality & Trust
+              </span>
+              <h2 className={`text-3xl md:text-5xl font-black font-display tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Privacy Policy
+              </h2>
+              <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                Last updated: June 2026. Tasha Contracts India is fully committed to safeguarding your private corporate blueprints, project inquiries, and personal details.
+              </p>
+            </div>
+
+            {/* Grid of Key Information Collected and Used */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Left column: Collected data points */}
+              <div className="lg:col-span-7 space-y-6">
+                <div className={`p-6 md:p-8 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-md shadow-slate-100/40'
+                }`}>
+                  <h3 className={`text-base font-bold font-display uppercase tracking-wider mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <span className="w-1.5 h-6 bg-amber-500 rounded-sm"></span>
+                    What Information is Collected
+                  </h3>
+                  <p className={`text-xs mb-6 leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    When you submit drawings, apply for bids, register queries, or use Tasha estimator workflows, we compile specific client coordinates to authenticate and price projects accurately:
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {[
+                      { title: "Personal Details", desc: "Full Name, Email addresses, and primary direct phone coordinates for persistent contract communications." },
+                      { title: "Company Parameters", desc: "Corporate entity and business registration figures to match formal B2B invoicing standards." },
+                      { title: "Project Blueprint data", desc: "CAD files, elevation drawings, structural specifications, site coordinates, and terrain surveys." },
+                      { title: "Contract Request Specs", desc: "Bidding deadlines, budget allocations, material requirements (e.g. LGSF weight ratios), and timelines." }
+                    ].map((item, idx) => (
+                      <div key={idx} className={`p-4 rounded-xl border transition-colors ${
+                        isDark ? 'bg-[#050D1A]/60 border-slate-800 hover:border-amber-500/20' : 'bg-slate-50 border-slate-150 hover:border-amber-500/30'
+                      }`}>
+                        <h4 className={`text-xs font-extrabold uppercase tracking-wider mb-1 text-amber-500`}>{item.title}</h4>
+                        <p className={`text-[11px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>{item.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={`p-6 md:p-8 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-md shadow-slate-100/40'
+                }`}>
+                  <h3 className={`text-base font-bold font-display uppercase tracking-wider mb-4 flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <span className="w-1.5 h-6 bg-amber-500 rounded-sm"></span>
+                    How Your Information is Utilized
+                  </h3>
+                  <div className="space-y-4">
+                    {[
+                      { title: "Project Inquiries & Direct Consultation", desc: "Analyzing your terrain details and layout dimensions to coordinate expert engineering advice." },
+                      { title: "Quotation & Estimatation Generation", desc: "Formatting highly precise, customized material takeoff sheets, labor projections, and pre-engineered blueprints." },
+                      { title: "Contract Processing & Execution", desc: "Formulating formal engineering agreements, coordinating work orders, and executing structural steel panel installations." },
+                      { title: "Client Support Operations", desc: "Answering design compliance inquiries and sending engineering updates via direct coordinates or WhatsApp." }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex gap-3">
+                        <div className="mt-0.5"><CheckCircle2 size={15} className="text-emerald-500 shrink-0" /></div>
+                        <div>
+                          <h4 className={`text-xs font-extrabold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>{item.title}</h4>
+                          <p className={`text-[11px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right column: Data Protection & Legal Details */}
+              <div className="lg:col-span-5 space-y-6">
+                
+                {/* Data Protection card */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-amber-500/5 border-amber-500/10' : 'bg-amber-50/10 border-amber-500/25 shadow-md'
+                }`}>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <ShieldCheck size={20} className="text-amber-500" />
+                    <h3 className={`text-xs font-extrabold uppercase tracking-wider font-display ${isDark ? 'text-amber-400' : 'text-amber-800'}`}>
+                      Strict Data Protection Policy
+                    </h3>
+                  </div>
+                  <p className={`text-xs leading-relaxed mb-3 ${isDark ? 'text-gray-300' : 'text-slate-700 font-medium'}`}>
+                    Tasha Contracts India enforces highly strict database security layouts. All submitted contract briefs, personal details, and architectural models are processed on highly secured cloud servers shielded behind strict security access tokens. 
+                  </p>
+                  <p className={`text-[11.5px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
+                    We prevent unauthorized intrusions, data leaks, or layout breaches through standard active encryption keys (AES-256 equivalent standard protocols on production-grade infrastructure).
+                  </p>
+                </div>
+
+                {/* Info Sharing card */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-black uppercase tracking-wider mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Third-Party Disclosure
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    We guarantee absolute confidentiality of your design parameters. We **never sell, trade, rent, or lease** client coordinates or elevation blueprints to third-party marketing entities. Information is only shared with trusted engineering sub-contractors directly involved in your project realization under strict NDA agreements.
+                  </p>
+                </div>
+
+                {/* Cookies card */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-black uppercase tracking-wider mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Cookies & Preferences
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    Tasha website implements lightweight system cookies solely to remember user preferred parameters such as visual theme states (Light/Dark mode layouts) and estimator input history in your local storage buffer.
+                  </p>
+                </div>
+
+                {/* Rights card */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-black uppercase tracking-wider mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Your Corporate Rights
+                  </h4>
+                  <ul className={`text-[11px] list-disc list-inside space-y-1.5 leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600 font-semibold'}`}>
+                    <li>Right to view collected project data sheets.</li>
+                    <li>Right to request rapid corrections on estimates.</li>
+                    <li>Right to request permanent deletion of your CAD entries.</li>
+                  </ul>
+                </div>
+
+                {/* Helpline card */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#050D1A]/60 border-slate-800' : 'bg-slate-100/75 border-slate-200'
+                }`}>
+                  <h4 className={`text-xs font-black uppercase tracking-wider mb-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Privacy Administration Office
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed mb-2 ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    Contact our administration desk to manage your corporate blueprints or request accounts deletion:
+                  </p>
+                  <div className="space-y-1 text-[11px] font-bold">
+                    <p className="flex items-center gap-1.5 text-amber-600">
+                      <Mail size={12} /> {systemInfo.email}
+                    </p>
+                    <p className="flex items-center gap-1.5 text-amber-600">
+                      <Phone size={12} /> {systemInfo.phone}
+                    </p>
+                    <p className="text-slate-500 font-semibold text-[10px] mt-1">
+                      Office: {systemInfo.address}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+
+        {/* ==============================================
+             10. TERMS & CONDITIONS PAGE
+           ============================================== */}
+        {activeTab === 'terms' && (
+          <motion.div 
+            key="terms"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -15 }}
+            transition={{ duration: 0.3 }}
+            className="space-y-12 animate-fade-in-up"
+          >
+            {/* Header Slogan */}
+            <div className={`pb-6 max-w-3xl space-y-3 border-b ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider flex items-center gap-1.5">
+                <Scale size={12} /> Legal Binding Framework
+              </span>
+              <h2 className={`text-3xl md:text-5xl font-black font-display tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Terms & Conditions
+              </h2>
+              <p className={`text-sm leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-655'}`}>
+                Last updated: June 2026. Please read these terms carefully before submitting project bids or authorizing Tasha Contracts India to start structural steel panel fabrication.
+              </p>
+            </div>
+
+            {/* Terms and Conditions structured details */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              <div className="lg:col-span-8 space-y-6">
+                
+                {[
+                  {
+                    title: "1. Acceptance of Terms",
+                    content: "By accessing, browsing, submitting inquiries, or drafting estimate configurations on the Tasha Contracts India portal, you legally acknowledge and agree to comply with these Terms & Conditions. If you do not accept these parameters, you must refrain from utilizing our online estimators or bidding infrastructure."
+                  },
+                  {
+                    title: "2. Scope of Services Offered",
+                    content: "Tasha Contracts India provides engineering consultation, structural analysis, pre-engineered Light Gauge Steel Framing (LGSF) supply, prefabricated panel fabrication, civil concrete alignment, MEP laying, and turnkey contracting solutions. All designs generated online serve as preliminary estimates and are subject to physical on-site soil evaluations and CAD approval."
+                  },
+                  {
+                    title: "3. Quotations, Pricing & Contracts",
+                    content: "Online estimates are subject to material price fluctuations (steel, concrete, wiring). Formal binding quotations remain valid for precisely 15 calendar days from issuance. CRITICAL RULE: Physical site mobilization, raw material fabrication under custom measurements, and general project execution will ONLY initiate after a formal written mutual agreement is authorized, and contract approval is officially executed by representatives of both parties."
+                  },
+                  {
+                    title: "4. User & Client Responsibilities",
+                    content: "Our clients are solely responsible for ensuring that all submitted CAD drawings, elevation benchmarks, soil load-bearing certificates, and local planning coordinates are legally accurate and represent true parameters. Tasha Contracts India accepts no liability for structural modifications arising from faulty pre-submitted layout plans."
+                  },
+                  {
+                    title: "5. Payment Terms & Milestone Invoicing",
+                    content: "Payments must align strictly with the schedule specified in the mutually accepted written contract. Typical terms integrate mobilization advance percentages, milestone invoices synchronized with on-site LGSF panel erections, and final retention releases post inspection. Late payments grant Tasha the administrative authority to halt on-site fabrication to mitigate structural hazard indices."
+                  },
+                  {
+                    title: "6. Project Timelines & Site Conditions",
+                    content: "Tasha Contracts is highly dedicated to executing prefabricated structures on or ahead of schedule. However, timelines remain subject to Force Majeure parameters including extreme terrain weather, government labor restrictions, custom logistics halts, and client-side delay variables (delayed CAD approvals or payment milestones)."
+                  },
+                  {
+                    title: "7. Intellectual Property & Drawings Protection",
+                    content: "All structural blueprint catalogs, customized light gauge steel profiles, code modules, estimating equations, graphics, layouts, and system logic on this platform are the exclusive intellectual property of Tasha Contracts India. Unauthorized copying, reverse-engineering, or commercial duplication of our proprietary LGSF spacing templates is strictly prohibited."
+                  },
+                  {
+                    title: "8. Limitation of Liability",
+                    content: "Tasha Contracts India crafts buildings strictly under Indian Standards (IS), CPWD specifications, and relevant structural codes. We assume no liability for indirect, consequential, or accidental damages arising from unauthorized structural renovations carried out post occupancy delivery by client-appointed third-party workers."
+                  },
+                  {
+                    title: "9. Cancellation Policy",
+                    content: "Any cancellation request must be submitted formally in writing. In the event of contract termination, the client warrants immediate compensation for all customized steel panels fabricated up to that hour, standard material restocking costs, and mobilization/demobilization expenditures incurred by our engineering team."
+                  }
+                ].map((term, index) => (
+                  <div key={index} className={`p-6 md:p-8 rounded-2xl border ${
+                    isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-md shadow-slate-100/40'
+                  }`}>
+                    <h3 className={`text-sm md:text-base font-bold font-display uppercase tracking-wider mb-3 ${
+                      isDark ? 'text-amber-500' : 'text-slate-900 border-l-3 border-amber-500 pl-3'
+                    }`}>
+                      {term.title}
+                    </h3>
+                    <p className={`text-xs md:text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-650 font-medium'}`}>
+                      {term.content}
+                    </p>
+                  </div>
+                ))}
+
+              </div>
+
+              {/* Sidebar: Compliance & Quick resolution Details */}
+              <div className="lg:col-span-4 space-y-6">
+                
+                {/* Visual quote/banner */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-amber-500/5 border-amber-500/10' : 'bg-amber-50/10 border-amber-500/25 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-black uppercase tracking-wider mb-2 ${isDark ? 'text-amber-450' : 'text-amber-700 font-bold'}`}>
+                    Mutual Commitment
+                  </h4>
+                  <p className={`text-xs leading-relaxed italic ${isDark ? 'text-gray-300' : 'text-slate-600 font-medium'}`}>
+                    "Engineering excellence is sustained purely by architectural honesty, legal transparency, and mutual trust."
+                  </p>
+                  <p className="text-[10px] font-bold text-slate-500 mt-2 text-right">
+                    — Talib Choudhary, MD
+                  </p>
+                </div>
+
+                {/* Regulatory Jurisdiction */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-extrabold uppercase tracking-wider mb-2 flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <Scale size={13} className="text-amber-500" />
+                    Governing Law
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed mb-3 ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    All contracts, transactions, estimations, and legal disputes arising from use of Tasha website services are strictly governed and construed in compliance with the laws of the Republic of India.
+                  </p>
+                  <p className={`text-[11px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                    Any judicial proceedings or mediation will fall under the jurisdiction of the competent courts of Amroha, Uttar Pradesh, India.
+                  </p>
+                </div>
+
+                {/* Contact Helpdesk */}
+                <div className={`p-6 rounded-2xl border ${
+                  isDark ? 'bg-[#0b1524]/60 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+                }`}>
+                  <h4 className={`text-xs font-extrabold uppercase tracking-wider mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Direct Contact for Disputes
+                  </h4>
+                  <p className={`text-[11px] leading-relaxed mb-4 ${isDark ? 'text-gray-400' : 'text-slate-600 font-medium'}`}>
+                    For any questions regarding binding agreements, customs project clauses, steel grades, or invoice milestones, reach out directly to our corporate estimating desk:
+                  </p>
+                  <div className="space-y-2 text-[11px] font-semibold">
+                    <div className="flex gap-2">
+                      <Mail size={14} className="text-amber-500 shrink-0" />
+                      <div>
+                        <p className={`text-[9px] uppercase font-bold text-slate-500`}>Official Mail</p>
+                        <a href={`mailto:${systemInfo.email}`} className="text-amber-600 font-bold hover:underline">{systemInfo.email}</a>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Phone size={14} className="text-amber-500 shrink-0" />
+                      <div>
+                        <p className={`text-[9px] uppercase font-bold text-slate-500`}>Calling Coordinates</p>
+                        <a href={`tel:${systemInfo.phone}`} className="text-amber-600 font-bold hover:underline">{systemInfo.phone}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </motion.div>
+        )}
+
+        </AnimatePresence>
+      </main>
+
+      {/* --- FOOTER COMPONENT --- */}
+      <footer className={`border-t transition-colors pt-12 pb-6 text-xs ${
+        isDark 
+          ? 'bg-[#030911]/95 border-slate-800 text-slate-400' 
+          : 'bg-slate-100 border-slate-200 text-slate-600'
+      }`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Quick Contact Coordinates Strip (Requested by User) */}
+          <div className={`flex flex-col md:flex-row justify-between items-center gap-4 pb-8 mb-8 border-b ${
+            isDark ? 'border-slate-800/80' : 'border-slate-200/90'
+          }`}>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 md:gap-8 text-xs md:text-sm">
+              <span className="flex items-center gap-2 hover:text-amber-550 transition-colors">
+                <Mail size={15} className="text-amber-500" />
+                <a href={`mailto:${systemInfo.email}`} className="font-bold transition-colors">{systemInfo.email}</a>
+              </span>
+              <span className="flex items-center gap-2 hover:text-amber-550 transition-colors">
+                <Phone size={15} className="text-amber-500" />
+                <a href={`tel:${systemInfo.phone}`} className="font-bold transition-colors">{systemInfo.phone}</a>
+              </span>
+              <span className="flex items-center gap-2">
+                <Clock size={15} className="text-amber-500" />
+                <span className={`font-bold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>{systemInfo.workingHours}</span>
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded text-amber-600 font-bold uppercase tracking-wider">
+                Since 2015
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              {systemInfo.logoUrl ? (
+                isDark ? (
+                  <div className="p-1.5 rounded-xl flex items-center justify-center bg-transparent">
+                    <img 
+                      src={systemInfo.logoUrl} 
+                      alt="Tasha Contracts Logo Footer" 
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                      className="h-10 md:h-12 w-auto object-contain select-none mix-blend-screen filter contrast-125"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center bg-transparent">
+                    <img 
+                      src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781288451/samples/chair-and-coffee-table.png" 
+                      alt="Tasha Contracts Logo Footer Light" 
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                      className="h-14 md:h-16 w-auto object-contain select-none"
+                    />
+                  </div>
+                )
+              ) : (
+                <span className={`font-display font-black text-base uppercase ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  TASHA CONTRACTS INDIA
+                </span>
+              )}
+            </div>
+            <p className="leading-relaxed font-medium">
+              Established 2015. Trustworthy engineering corporate, specializing in fast, premium LGSF and structural Prefabricated solutions. Delivering excellence across national circles.
+            </p>
+            <div className="space-y-1">
+              <p className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Headquarters (Amroha):</p>
+              <p className="text-[11px] font-medium">{systemInfo.address}</p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className={`font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900 text-sm'}`}>Quick Navigation</h4>
+            <ul className="space-y-1.5 uppercase tracking-wide text-[11px] font-bold">
+              <li><button onClick={() => setActiveTab('home')} className="hover:text-amber-600">Corporate Home</button></li>
+              <li><button onClick={() => setActiveTab('about')} className="hover:text-amber-600">About Tasha</button></li>
+              <li><button onClick={() => setActiveTab('services')} className="hover:text-amber-600">Service Catalogs</button></li>
+              <li><button onClick={() => setActiveTab('projects')} className="hover:text-amber-600">Built Gallery</button></li>
+            </ul>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className={`font-bold uppercase tracking-wider font-display ${isDark ? 'text-white' : 'text-slate-900 text-sm'}`}>Specialized Circles</h4>
+            <ul className="space-y-1.5 text-[11px] font-semibold">
+              <li>● Light Gauge Steel Framing (LGSF)</li>
+              <li>● Turnkey Prefabricated Shells</li>
+              <li>● High-voltage MEP wiring lines</li>
+              <li>● Heavy Civil concrete laying</li>
+              <li>● Modern corporate acoustic cabins</li>
+            </ul>
+          </div>
+
+          <div className={`space-y-4 col-span-1 border-t md:border-t-0 pt-4 md:pt-0 ${isDark ? 'border-slate-800/85' : 'border-slate-200'}`}>
+            <h4 className={`font-bold uppercase tracking-wider font-display ${isDark ? 'text-white' : 'text-slate-900 text-sm'}`}>Estimating Office</h4>
+            <p className="leading-relaxed font-medium">
+              Direct and granular bidding processes. Submit drawings, specifications, location terrain benchmarks, and CAD records online.
+            </p>
+            <button
+              onClick={() => setActiveTab('contact')}
+              className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold uppercase tracking-wider text-[11px] rounded shadow-sm cursor-pointer transition-colors"
+            >
+              Apply for Contract
+            </button>
+          </div>
+
+        </div>
+        </div>
+
+        {/* Dynamic Legal and Copyright notes matches user requested items */}
+        <div className={`mt-8 border-t pt-6 text-center text-[10px] space-y-2 ${isDark ? 'border-slate-800/60 text-gray-500' : 'border-slate-200 text-slate-500'}`}>
+          <p className="font-medium">
+            © {new Date().getFullYear()} Tasha Contracts{' '}
+            <button 
+              onClick={() => setActiveTab('webmanager')}
+              className="bg-transparent border-none p-0 inline m-0 hover:text-white transition-colors outline-none cursor-default"
+            >
+              India
+            </button>. All Rights Reserved. Specialization in LGSF & Prefabs Since 2015
+          </p>
+          <p className="font-medium">
+            <span 
+              onClick={() => setActiveTab('admin')} 
+              className="cursor-default select-none transition-all hover:opacity-90 active:scale-[0.98] inline-block"
+              style={{ userSelect: 'none' }}
+            >
+              Disclaimer:
+            </span>{' '}
+            Images are representation references. Subject to Class-A governmental planning compliance.
+          </p>
+          <div className="flex justify-center flex-wrap gap-4 text-gray-400 font-bold">
+            <button onClick={() => setActiveTab('privacy')} className={`hover:underline ${isDark ? 'text-gray-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>Privacy Policy</button>
+            <span>|</span>
+            <button onClick={() => setActiveTab('terms')} className={`hover:underline ${isDark ? 'text-gray-400 hover:text-white' : 'text-slate-600 hover:text-slate-900'}`}>Terms & Conditions</button>
+          </div>
+        </div>
+      </footer>
+
+      {/* --- FLOATING INTUITIVE WHATSAPP MODULE FOR ACTIVE CLIENT LEADS --- */}
+      <a 
+        href={`https://wa.me/${systemInfo.whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20Tasha%20Contracts%20India,%20I%20am%20interested%20in%2520a%20construction%20project.`}
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 p-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center border border-emerald-400/25"
+        title="Chat with Tasha MD via WhatsApp"
+      >
+        <PhoneCall size={24} />
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border border-white animate-ping"></span>
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border border-white"></span>
+      </a>
+
+    </div>
+  );
+}
