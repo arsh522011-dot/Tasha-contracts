@@ -2764,13 +2764,18 @@ export default function App() {
       {/* --- FLOATING INTUITIVE WHATSAPP MODULE FOR ACTIVE CLIENT LEADS --- */}
       {systemInfo.whatsapp && systemInfo.whatsapp.trim() !== '' && (
         <a 
-          href={`https://wa.me/${systemInfo.whatsapp.replace(/[^0-9]/g, '')}?text=Hello%20Tasha%20Contracts%20India,%20I%20am%20interested%20in%2520a%20construction%20project.`}
+          href={`https://wa.me/${systemInfo.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(systemInfo.whatsappMessage || 'Hello Tasha Contracts India, I am interested in a construction project.')}`}
           target="_blank" 
           rel="noopener noreferrer"
           className="fixed bottom-6 right-6 z-50 p-4 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center border border-emerald-400/25"
           title="Chat with Tasha MD via WhatsApp"
         >
-          <PhoneCall size={24} />
+          <img 
+            src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781643194/samples/cloudinary-icon.png"
+            alt="WhatsApp Chat"
+            className="w-7 h-7 object-contain"
+            referrerPolicy="no-referrer"
+          />
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border border-white animate-ping"></span>
           <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 rounded-full border border-white"></span>
         </a>

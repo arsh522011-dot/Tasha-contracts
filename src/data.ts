@@ -426,6 +426,7 @@ export const INITIAL_SYSTEM_INFO = {
   address: 'Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh) - 244221, India',
   phone: '+91 94119 55562', // valid representative phone sample
   whatsapp: '+919411955562',
+  whatsappMessage: 'Hello Tasha Contracts India, I am interested in a construction project.',
   workingHours: 'Monday - Saturday: 9:00 AM - 6:30 PM',
   slogan: 'Building Trust, Delivering Excellence',
   headerTagline: 'Make Tomorrow With Us',

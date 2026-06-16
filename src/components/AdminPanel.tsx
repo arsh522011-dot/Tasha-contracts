@@ -2348,7 +2348,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               />
             </div>
             <div>
-              <label className={labelClass}>WhatsApp QuickLink</label>
+              <label className={labelClass}>WhatsApp QuickLink (Full Phone Number with Country Code)</label>
               <input
                 type="text"
                 placeholder="e.g. +919411955562"
@@ -2360,6 +2360,20 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 To hide the floating green WhatsApp widget entirely from the website, clear this field. Entering a phone number here will show it on the site.
               </p>
             </div>
+          </div>
+
+          <div>
+            <label className={labelClass}>WhatsApp Pre-filled Greeting Message</label>
+            <input
+              type="text"
+              placeholder="e.g. Hello Tasha Contracts India, I am interested in a construction project."
+              value={localSystemInfo.whatsappMessage || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, whatsappMessage: e.target.value })}
+              className={inputClass}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              The automated message loaded in the visitor's WhatsApp composer when they click the WhatsApp button.
+            </p>
           </div>
 
           <div>
