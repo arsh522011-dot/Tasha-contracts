@@ -10,6 +10,7 @@ export interface Project {
   client: string;
   beforeImage?: string;
   afterImage?: string;
+  galleryImages?: string[];
 }
 
 export interface Service {
@@ -37,6 +38,7 @@ export interface TeamMember {
   role: string;
   image: string;
   bio: string;
+  guarantees?: string[];
 }
 
 export interface Certificate {
@@ -99,3 +101,20 @@ export interface CareerApplication {
   submissionDate: string;
   status: 'Pending' | 'Shortlisted' | 'Rejected';
 }
+
+export interface Industry {
+  id: string;
+  name: string;
+  description: string;
+  iconName: string; // Lucide icon name
+  points: string[]; // key details or segments served in this industry
+}
+
+export interface PartnerCompany {
+  id: string;
+  name: string;
+  subtitle: string;
+  colorClass: string; // e.g. text-red-500, text-amber-500, etc.
+}
+
+

@@ -8,19 +8,12 @@ import {
   getDocs,
   getDocFromServer
 } from "firebase/firestore";
+import firebaseConfig from "../../firebase-applet-config.json";
 
-export const firebaseConfig = {
-  apiKey: "AIzaSyDx4x8QiyKxi1KTB5_KZZ8O2eTJXQ367EY",
-  authDomain: "tasha-contracts.firebaseapp.com",
-  projectId: "tasha-contracts",
-  storageBucket: "tasha-contracts.firebasestorage.app",
-  messagingSenderId: "298576405181",
-  appId: "1:298576405181:web:910957cae6f64342110dd4"
-};
-
-// Initialize Firebase
+// Initialize Firebase with dynamic parameters
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+
 
 export enum OperationType {
   CREATE = 'create',

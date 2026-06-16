@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, Check } from 'lucide-react';
+import { DynamicIcon } from './Icons';
 
 interface WebMediaManagerProps {
   systemInfo: any;
@@ -8,6 +9,7 @@ interface WebMediaManagerProps {
   onUpdateSystemInfo: (data: any) => void;
   onUpdateProjects: (data: any[]) => void;
   onUpdateTeam: (data: any[]) => void;
+  isDark?: boolean;
 }
 
 export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
@@ -16,7 +18,8 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
   team,
   onUpdateSystemInfo,
   onUpdateProjects,
-  onUpdateTeam
+  onUpdateTeam,
+  isDark = true
 }) => {
   const [webMediaSuccess, setWebMediaSuccess] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -83,7 +86,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
 
     return (
       <div className="relative overflow-hidden group">
-        <label className="text-[10px] uppercase font-bold tracking-wider px-3 py-2 border border-slate-700 hover:border-amber-500 hover:text-amber-500 rounded bg-slate-950 text-gray-400 select-none cursor-pointer flex items-center transition-all bg-opacity-70 group-hover:bg-slate-900 group-active:scale-95">
+        <label className={`text-[10px] uppercase font-bold tracking-wider px-3 py-2 border rounded select-none cursor-pointer flex items-center transition-all group-active:scale-95 ${
+          isDark 
+            ? 'border-slate-705 hover:border-amber-500 hover:text-amber-500 bg-slate-950 text-gray-400 bg-opacity-70 group-hover:bg-slate-900' 
+            : 'border-slate-300 hover:border-amber-600 hover:text-amber-600 bg-slate-100 text-slate-700 hover:bg-slate-200'
+        }`}>
           <input 
             type="file" 
             accept={resourceType === 'image' ? 'image/*' : 'video/*'} 
@@ -117,24 +124,28 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
   };
 
   return (
-        <div className="space-y-8 animate-fade-in-up">
-          <div className="pb-4 border-b border-slate-800 space-y-1">
-            <h4 className="text-lg font-bold font-display text-white">Dynamic Website Media Manager</h4>
-            <p className="text-xs text-gray-400">
+        <div className={`space-y-8 animate-fade-in-up ${isDark ? 'text-white' : 'text-slate-800'}`}>
+          <div className={`pb-4 border-b space-y-1 ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
+            <h4 className={`text-lg font-bold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>Dynamic Website Media Manager</h4>
+            <p className={`text-xs ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
               Directly rewrite, upload, or substitute video backdrops, CTA hero slots, map outlines, and individual project imagery in real-time.
             </p>
           </div>
 
           {webMediaSuccess && (
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg text-emerald-300 text-xs font-sans font-medium flex items-center justify-between">
+            <div className={`p-3 border rounded-lg text-xs font-sans font-medium flex items-center justify-between ${
+              isDark ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            }`}>
               <span>{webMediaSuccess}</span>
-              <button type="button" onClick={() => setWebMediaSuccess('')} className="hover:text-white font-bold text-xs font-sans select-none cursor-pointer">✕</button>
+              <button type="button" onClick={() => setWebMediaSuccess('')} className="hover:text-amber-500 font-bold text-xs font-sans select-none cursor-pointer">✕</button>
             </div>
           )}
           {uploadError && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-xs font-sans font-medium flex items-center justify-between">
+            <div className={`p-3 border rounded-lg text-xs font-sans font-medium flex items-center justify-between ${
+              isDark ? 'bg-red-500/10 border-red-500/30 text-red-400' : 'bg-red-50 border-red-200 text-red-800'
+            }`}>
               <span>{uploadError}</span>
-              <button type="button" onClick={() => setUploadError('')} className="hover:text-white font-bold text-xs font-sans select-none cursor-pointer">✕</button>
+              <button type="button" onClick={() => setUploadError('')} className="hover:text-amber-500 font-bold text-xs font-sans select-none cursor-pointer">✕</button>
             </div>
           )}
 
@@ -142,20 +153,26 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
             
             {/* COLUMN 1: LAYOUT VIDEO & HERO SLOTS (40%) */}
             <div className="lg:col-span-5 space-y-6 text-left">
-              <div className="p-6 bg-slate-850/40 border border-slate-800 rounded-2xl space-y-5">
-                <div className="space-y-0.5 border-b border-slate-800 pb-3">
-                  <h5 className="text-xs uppercase font-extrabold tracking-wider text-white">Hero Panel Background Video</h5>
-                  <p className="text-[10px] text-gray-500">The primary structural background loop seen on the home portal.</p>
+              <div className={`p-6 border rounded-2xl space-y-5 transition-colors ${
+                isDark ? 'bg-slate-850/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+              }`}>
+                <div className={`space-y-0.5 border-b pb-3 ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                  <h5 className={`text-xs uppercase font-extrabold tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>Hero Panel Background Video</h5>
+                  <p className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-slate-500'}`}>The primary structural background loop seen on the home portal.</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">WebM or MP4 Vector Source</label>
+                  <label className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>WebM or MP4 Vector Source</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="text" 
                       value={heroVideoUrl}
                       onChange={(e) => setHeroVideoUrl(e.target.value)}
-                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                      className={`flex-1 px-3 py-2 text-xs rounded focus:border-amber-500 focus:outline-none border transition-colors ${
+                        isDark 
+                          ? 'bg-slate-900 border-slate-700 text-white' 
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:bg-white'
+                      }`}
                     />
                     <CloudinaryUploadButton 
                       resourceType="video"
@@ -172,13 +189,17 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Static Poster Fallback</label>
+                  <label className={`text-[10px] font-bold uppercase tracking-widest ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>Static Poster Fallback</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="text" 
                       value={heroPosterUrl}
                       onChange={(e) => setHeroPosterUrl(e.target.value)}
-                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                      className={`flex-1 px-3 py-2 text-xs rounded focus:border-amber-500 focus:outline-none border transition-colors ${
+                        isDark 
+                          ? 'bg-slate-900 border-slate-700 text-white' 
+                          : 'bg-slate-50 border-slate-300 text-slate-900 focus:bg-white'
+                      }`}
                     />
                     <CloudinaryUploadButton 
                       resourceType="image"
@@ -195,18 +216,20 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                 </div>
               </div>
 
-              <div className="p-6 bg-slate-850/40 border border-slate-800 rounded-2xl space-y-5">
-                <div className="space-y-0.5 border-b border-slate-800 pb-3">
-                  <h5 className="text-xs uppercase font-extrabold tracking-wider text-white">Full-Width Segments & CTA Blocks</h5>
-                  <p className="text-[10px] text-gray-500">Backdrop layers for specialized sub-portal areas.</p>
+              <div className={`p-6 border rounded-2xl space-y-5 transition-colors ${
+                isDark ? 'bg-slate-850/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+              }`}>
+                <div className={`space-y-0.5 border-b pb-3 ${isDark ? 'border-slate-800' : 'border-slate-100'}`}>
+                  <h5 className={`text-xs uppercase font-extrabold tracking-wider ${isDark ? 'text-white' : 'text-slate-900'}`}>Full-Width Segments & CTA Blocks</h5>
+                  <p className={`text-[10px] ${isDark ? 'text-gray-500' : 'text-slate-500'}`}>Backdrop layers for specialized sub-portal areas.</p>
                 </div>
 
                 <div className="space-y-3">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
+                    <label className={`text-[10px] font-bold uppercase tracking-widest flex items-center justify-between ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
                       Contact/Action Block Backdrop
                       {ctaBgUrl !== systemInfo.ctaBgUrl && (
-                        <button type="button" onClick={() => handleSaveSystemParam('ctaBgUrl', ctaBgUrl)} className="text-emerald-400 font-bold hover:underline cursor-pointer">SAVE NOW</button>
+                        <button type="button" onClick={() => handleSaveSystemParam('ctaBgUrl', ctaBgUrl)} className="text-emerald-500 font-bold hover:underline cursor-pointer">SAVE NOW</button>
                       )}
                     </label>
                     <div className="flex gap-2">
@@ -214,17 +237,21 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                         type="text" 
                         value={ctaBgUrl}
                         onChange={(e) => setCtaBgUrl(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                        className={`flex-1 px-3 py-2 text-xs rounded focus:border-amber-500 focus:outline-none border transition-colors ${
+                          isDark 
+                            ? 'bg-slate-900 border-slate-700 text-white' 
+                            : 'bg-slate-50 border-slate-300 text-slate-900 focus:bg-white'
+                        }`}
                       />
                       <CloudinaryUploadButton resourceType="image" label="Img" onSuccess={(url) => { setCtaBgUrl(url); handleSaveSystemParam('ctaBgUrl', url); }} />
                     </div>
                   </div>
 
                   <div className="space-y-1.5 pt-2">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
+                    <label className={`text-[10px] font-bold uppercase tracking-widest flex items-center justify-between ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
                       Team Banner Poster (Admin)
                       {teamBgUrl !== systemInfo.teamBgUrl && (
-                        <button type="button" onClick={() => handleSaveSystemParam('teamBgUrl', teamBgUrl)} className="text-emerald-400 font-bold hover:underline cursor-pointer">SAVE NOW</button>
+                        <button type="button" onClick={() => handleSaveSystemParam('teamBgUrl', teamBgUrl)} className="text-emerald-500 font-bold hover:underline cursor-pointer">SAVE NOW</button>
                       )}
                     </label>
                     <div className="flex gap-2">
@@ -232,17 +259,21 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                         type="text" 
                         value={teamBgUrl}
                         onChange={(e) => setTeamBgUrl(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                        className={`flex-1 px-3 py-2 text-xs rounded focus:border-amber-500 focus:outline-none border transition-colors ${
+                          isDark 
+                            ? 'bg-slate-900 border-slate-700 text-white' 
+                            : 'bg-slate-50 border-slate-300 text-slate-900 focus:bg-white'
+                        }`}
                       />
                       <CloudinaryUploadButton resourceType="image" label="Img" onSuccess={(url) => { setTeamBgUrl(url); handleSaveSystemParam('teamBgUrl', url); }} />
                     </div>
                   </div>
                   
                   <div className="space-y-1.5 pt-2">
-                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center justify-between">
+                    <label className={`text-[10px] font-bold uppercase tracking-widest flex items-center justify-between ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
                       Contact Map Vector Layout
                       {mapMediaUrl !== systemInfo.mapMediaUrl && (
-                         <button type="button" onClick={() => handleSaveSystemParam('mapMediaUrl', mapMediaUrl)} className="text-emerald-400 font-bold hover:underline cursor-pointer">SAVE NOW</button>
+                         <button type="button" onClick={() => handleSaveSystemParam('mapMediaUrl', mapMediaUrl)} className="text-emerald-500 font-bold hover:underline cursor-pointer">SAVE NOW</button>
                       )}
                     </label>
                     <div className="flex gap-2">
@@ -250,7 +281,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                         type="text" 
                         value={mapMediaUrl}
                         onChange={(e) => setMapMediaUrl(e.target.value)}
-                        className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                        className={`flex-1 px-3 py-2 text-xs rounded focus:border-amber-500 focus:outline-none border transition-colors ${
+                          isDark 
+                            ? 'bg-slate-900 border-slate-700 text-white' 
+                            : 'bg-slate-50 border-slate-300 text-slate-900 focus:bg-white'
+                        }`}
                       />
                       <CloudinaryUploadButton resourceType="image" label="Img" onSuccess={(url) => { setMapMediaUrl(url); handleSaveSystemParam('mapMediaUrl', url); }} />
                     </div>
@@ -258,9 +293,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                 </div>
 
                 {/* Example live preview of the video */}
-                <div className="h-28 w-full bg-slate-950 rounded-lg overflow-hidden relative border border-slate-800 shadow-inner group">
+                <div className={`h-28 w-full bg-slate-950 rounded-lg overflow-hidden relative shadow-inner group border ${
+                  isDark ? 'border-slate-800' : 'border-slate-200'
+                }`}>
                   <video 
-                    src={heroVideoUrl} 
+                    src={heroVideoUrl || undefined} 
                     autoPlay 
                     loop 
                     muted 
@@ -276,14 +313,18 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
 
             {/* COLUMN 2: INTEGRATED DYNAMIC IMAGE CATALOGUE (60%) */}
             <div className="lg:col-span-7 space-y-6 text-left">
-              <div className="p-6 bg-slate-850/40 border border-slate-800 rounded-2xl space-y-5">
+              <div className={`p-6 border rounded-2xl space-y-5 transition-colors ${
+                isDark ? 'bg-slate-850/40 border-slate-800' : 'bg-white border-slate-200 shadow-sm'
+              }`}>
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-0.5">
                     <h5 className="text-xs uppercase font-extrabold tracking-wider text-amber-500">Dynamic Content Image Catalog</h5>
-                    <p className="text-[10px] text-gray-455">Scan, preview, and substitute individual client images, team member profiles, and construction templates directly.</p>
+                    <p className={`text-[10px] ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>Scan, preview, and substitute individual client images, team member profiles, and construction templates directly.</p>
                   </div>
 
-                  <div className="flex bg-slate-900 border border-slate-700 rounded-lg p-0.5 text-[10px] uppercase font-bold shrink-0 self-start">
+                  <div className={`flex border rounded-lg p-0.5 text-[10px] uppercase font-bold shrink-0 self-start ${
+                    isDark ? 'bg-slate-900 border-slate-700' : 'bg-slate-100 border-slate-200'
+                  }`}>
                     {(['all', 'projects', 'team'] as const).map((filter) => (
                       <button
                         key={filter}
@@ -295,7 +336,7 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                         className={`px-3 py-1 rounded transition-all cursor-pointer select-none ${
                           catalogFilter === filter 
                             ? 'bg-amber-500 text-slate-950 font-black' 
-                            : 'text-gray-400 hover:text-white'
+                            : isDark ? 'text-gray-400 hover:text-white' : 'text-slate-650 hover:text-slate-950 font-medium'
                         }`}
                       >
                         {filter}
@@ -306,22 +347,26 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
 
                 {/* MAIN INLINE ASSET EDITOR (SHOWS ONLY WHEN AN IMAGE IS BEING EDITED IN THE CATALOG) */}
                 {catalogEditId && (
-                  <div className="p-4 bg-slate-900 border border-amber-500/40 rounded-xl space-y-3 animate-fade-in-up">
+                  <div className={`p-4 border rounded-xl space-y-3 animate-fade-in-up ${
+                    isDark ? 'bg-slate-900 border-amber-500/40' : 'bg-amber-50/50 border-amber-500/30'
+                  }`}>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5 select-none font-display">
+                      <span className="text-xs font-bold text-amber-500 uppercase tracking-wider flex items-center gap-1.5 select-none font-display">
                         Substitute Media Link
                       </span>
                       <button 
                         type="button" 
                         onClick={() => setCatalogEditId(null)}
-                        className="text-gray-400 hover:text-white text-xs font-bold select-none cursor-pointer"
+                        className={`text-xs font-bold select-none cursor-pointer ${isDark ? 'text-gray-400 hover:text-white' : 'text-slate-500 hover:text-slate-800'}`}
                       >
                         ✕ Cancel
                       </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                      <div className="md:col-span-1 h-20 bg-slate-950 rounded-lg overflow-hidden border border-slate-800 relative flex items-center justify-center">
+                      <div className={`md:col-span-1 h-20 rounded-lg overflow-hidden relative flex items-center justify-center border ${
+                        isDark ? 'bg-slate-950 border-slate-800' : 'bg-slate-100 border-slate-200'
+                      }`}>
                         {catalogEditValue ? (
                           <img 
                             src={catalogEditValue} 
@@ -343,7 +388,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                             type="text" 
                             value={catalogEditValue}
                             onChange={(e) => setCatalogEditValue(e.target.value)}
-                            className="flex-1 px-2 py-1.5 bg-slate-850 border border-slate-700 text-xs text-white rounded focus:border-amber-500 focus:outline-none"
+                            className={`flex-1 px-2 py-1.5 text-xs rounded focus:border-amber-500 focus:outline-none border ${
+                              isDark 
+                                ? 'bg-slate-850 border-slate-705 text-white' 
+                                : 'bg-white border-slate-305 text-slate-900 focus:bg-white'
+                            }`}
                             placeholder="Enter absolute image URL..."
                           />
                           <CloudinaryUploadButton 
@@ -357,7 +406,9 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                           <button
                             type="button"
                             onClick={() => setCatalogEditId(null)}
-                            className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-gray-300 text-[10px] uppercase font-bold rounded select-none cursor-pointer"
+                            className={`px-2.5 py-1 text-[10px] uppercase font-bold rounded select-none cursor-pointer transition-colors ${
+                              isDark ? 'bg-slate-800 hover:bg-slate-700 text-gray-300' : 'bg-slate-200 hover:bg-slate-300 text-slate-705'
+                            }`}
                           >
                             Cancel
                           </button>
@@ -386,23 +437,27 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                     ].filter(asset => asset.field === 'image' || asset.url); // Show before/after only if present or being initialized
 
                     return (
-                      <div key={p.id} className="p-3 bg-slate-900/40 rounded-xl space-y-2.5 border border-slate-800/60">
+                      <div key={p.id} className={`p-3 rounded-xl space-y-2.5 border transition-colors ${
+                        isDark ? 'bg-slate-900/40 border-slate-800/60' : 'bg-slate-50/60 border-slate-200/70 shadow-sm'
+                      }`}>
                         <div className="flex items-center justify-between font-sans">
                           <div>
-                            <span className="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-400 text-[8px] font-bold uppercase rounded">
+                            <span className="px-1.5 py-0.5 bg-indigo-500/10 text-indigo-500 text-[8px] font-bold uppercase rounded">
                               {p.category}
                             </span>
-                            <h6 className="text-[11px] font-bold text-white mt-1">{p.title}</h6>
+                            <h6 className={`text-[11px] font-bold mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{p.title}</h6>
                           </div>
-                          <span className="text-[9px] text-gray-400 uppercase font-bold">{p.status}</span>
+                          <span className={`text-[9px] uppercase font-bold ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>{p.status}</span>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           {assets.map((asset) => (
-                            <div key={asset.field} className="relative group bg-slate-950 p-2 rounded-lg border border-slate-850 flex flex-col justify-between space-y-2 hover:border-slate-700 transition-all">
-                              <span className="text-[8px] text-gray-400 uppercase font-black tracking-wider block">{asset.label}</span>
+                            <div key={asset.field} className={`relative group p-2 rounded-lg border flex flex-col justify-between space-y-2 transition-all ${
+                              isDark ? 'bg-slate-950 border-slate-850 hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300 shadow-sm'
+                            }`}>
+                              <span className={`text-[8px] uppercase font-black tracking-wider block ${isDark ? 'text-gray-400' : 'text-slate-500'}`}>{asset.label}</span>
                               
-                              <div className="h-20 w-full bg-slate-900 rounded overflow-hidden relative flex items-center justify-center">
+                              <div className={`h-20 w-full rounded overflow-hidden relative flex items-center justify-center ${isDark ? 'bg-slate-900' : 'bg-slate-100'}`}>
                                 {asset.url ? (
                                   <img 
                                     src={asset.url} 
@@ -411,7 +466,7 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                                     referrerPolicy="no-referrer"
                                   />
                                 ) : (
-                                  <span className="text-[9px] text-gray-600 italic select-none">Unassigned</span>
+                                  <span className={`text-[9px] italic select-none ${isDark ? 'text-gray-600' : 'text-slate-400'}`}>Unassigned</span>
                                 )}
                               </div>
 
@@ -422,7 +477,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                                   setCatalogEditField(asset.field);
                                   setCatalogEditValue(asset.url || '');
                                 }}
-                                className="w-full py-1 text-center bg-slate-800 hover:bg-slate-700 text-gray-300 text-[8px] uppercase font-bold rounded flex items-center justify-center gap-1 select-none cursor-pointer"
+                                className={`w-full py-1 text-center text-[8px] uppercase font-bold rounded flex items-center justify-center gap-1 select-none cursor-pointer transition-colors ${
+                                  isDark 
+                                    ? 'bg-slate-850 hover:bg-slate-800 text-gray-300 border-slate-750' 
+                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-250'
+                                }`}
                               >
                                 <Edit2 size={9} /> Swap image
                               </button>
@@ -435,20 +494,26 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
 
                   {/* Dynamic team mapper */}
                   {(catalogFilter === 'all' || catalogFilter === 'team') && team.map((t) => (
-                    <div key={t.id} className="p-3 bg-slate-900/40 rounded-xl flex items-center justify-between border border-slate-800/60 font-sans">
+                    <div key={t.id} className={`p-3 rounded-xl flex items-center justify-between border font-sans transition-colors ${
+                      isDark ? 'bg-slate-900/40 border-slate-800/60' : 'bg-slate-50 /50 border-slate-200 shadow-sm'
+                    }`}>
                       <div className="flex items-center gap-3">
-                        <div className="h-14 w-14 rounded-full overflow-hidden shrink-0 border border-slate-700 bg-slate-950">
-                          <img 
-                            src={t.image} 
-                            alt={t.name}
-                            className="w-full h-full object-cover" 
-                            referrerPolicy="no-referrer"
-                          />
+                        <div className={`h-14 w-14 rounded-full overflow-hidden shrink-0 border flex items-center justify-center ${isDark ? 'border-slate-700 bg-slate-950' : 'border-slate-200 bg-white shadow-sm'}`}>
+                          {t.image && (t.image.startsWith('http://') || t.image.startsWith('https://') || t.image.startsWith('data:image/')) ? (
+                            <img 
+                              src={t.image} 
+                              alt={t.name}
+                              className="w-full h-full object-cover" 
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            <DynamicIcon name={t.image || 'HardHat'} size={24} className="text-amber-500" />
+                          )}
                         </div>
                         <div>
                           <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-500 text-[8px] font-bold uppercase rounded font-display">Team Portrait</span>
-                          <h6 className="text-xs font-bold text-white mt-1">{t.name}</h6>
-                          <p className="text-[10px] text-gray-400">{t.role}</p>
+                          <h6 className={`text-xs font-bold mt-1 ${isDark ? 'text-white' : 'text-slate-900'}`}>{t.name}</h6>
+                          <p className={`text-[10px] ${isDark ? 'text-gray-400' : 'text-slate-550'}`}>{t.role}</p>
                         </div>
                       </div>
 
@@ -459,7 +524,11 @@ export const WebMediaManager: React.FC<WebMediaManagerProps> = ({
                           setCatalogEditField('image');
                           setCatalogEditValue(t.image);
                         }}
-                        className="px-3 py-1.5 bg-slate-850 hover:bg-slate-800 text-gray-300 text-[10px] uppercase font-bold rounded flex items-center gap-1.5 cursor-pointer border border-slate-750 select-none"
+                        className={`px-3 py-1.5 text-[10px] uppercase font-bold rounded flex items-center gap-1.5 cursor-pointer border select-none transition-colors ${
+                          isDark 
+                            ? 'bg-slate-855 hover:bg-slate-800 text-gray-300 border-slate-750' 
+                            : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-250 shadow-sm'
+                        }`}
                       >
                         <Edit2 size={10} /> Swap Photo
                       </button>

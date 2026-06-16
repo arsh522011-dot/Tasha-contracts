@@ -1,0 +1,242 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "Contracts, construction, and engineering project entries",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "location": { "type": "string" },
+        "date": { "type": "string" },
+        "client": { "type": "string" },
+        "scale": { "type": "string" },
+        "features": { "type": "array" }
+      },
+      "required": ["id", "title"]
+    },
+    "Service": {
+      "title": "Service",
+      "description": "Offered structural, LGSF or interior engineering services",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "iconName": { "type": "string" },
+        "details": { "type": "string" },
+        "features": { "type": "array" }
+      },
+      "required": ["id", "name"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Client reviews and feedback",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "author": { "type": "string" },
+        "role": { "type": "string" },
+        "company": { "type": "string" },
+        "text": { "type": "string" },
+        "rating": { "type": "number" },
+        "avatar": { "type": "string" }
+      },
+      "required": ["id", "author", "text"]
+    },
+    "TeamMember": {
+      "title": "TeamMember",
+      "description": "Staff profile directory entries",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "image": { "type": "string" },
+        "bio": { "type": "string" }
+      },
+      "required": ["id", "name", "role"]
+    },
+    "Industry": {
+      "title": "Industry",
+      "description": "Industries and segments served under Tasha Contracts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "iconName": { "type": "string" },
+        "points": { "type": "array" }
+      },
+      "required": ["id", "name", "description"]
+    },
+    "Certificate": {
+      "title": "Certificate",
+      "description": "Quality assurance and corporate ISO accreditations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "issuer": { "type": "string" },
+        "date": { "type": "string" },
+        "image": { "type": "string" }
+      },
+      "required": ["id", "title"]
+    },
+    "CareerListing": {
+      "title": "CareerListing",
+      "description": "Open positions and active listings",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "department": { "type": "string" },
+        "type": { "type": "string" },
+        "location": { "type": "string" },
+        "experience": { "type": "string" },
+        "salary": { "type": "string" },
+        "description": { "type": "string" },
+        "requirements": { "type": "array" },
+        "responsibilities": { "type": "array" }
+      },
+      "required": ["id", "title"]
+    },
+    "QuoteRequest": {
+      "title": "QuoteRequest",
+      "description": "Client requested estimates for projects",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "company": { "type": "string" },
+        "estimatedSqFt": { "type": "string" },
+        "constructionType": { "type": "string" },
+        "estimatedBudget": { "type": "string" },
+        "message": { "type": "string" },
+        "submissionDate": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Messages from the client contact form",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "submissionDate": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email", "message"]
+    },
+    "CareerApplication": {
+      "title": "CareerApplication",
+      "description": "Submissions for active careers",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "careerId": { "type": "string" },
+        "careerTitle": { "type": "string" },
+        "fullName": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "resumeUrl": { "type": "string" },
+        "coverLetter": { "type": "string" },
+        "submissionDate": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "fullName", "email"]
+    },
+    "PartnerCompany": {
+      "title": "PartnerCompany",
+      "description": "Companion, client and partner brands",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "subtitle": { "type": "string" },
+        "colorClass": { "type": "string" }
+      },
+      "required": ["id", "name", "subtitle"]
+    },
+    "SystemInfo": {
+      "title": "SystemInfo",
+      "description": "Global settings and system branding parameters",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "companyTagline": { "type": "string" },
+        "companyAbout": { "type": "string" },
+        "companyAboutSub": { "type": "string" },
+        "companyEmail": { "type": "string" },
+        "companyPhone": { "type": "string" },
+        "companyAddress": { "type": "string" },
+        "accentColorName": { "type": "string" },
+        "statProjectsLabel": { "type": "string" },
+        "statTeamMembersLabel": { "type": "string" },
+        "statCitiesServedLabel": { "type": "string" }
+      },
+      "required": ["companyName", "companyEmail"]
+    }
+  },
+  "firestore": {
+    "projects": {
+      "schema": "Project",
+      "description": "Engineering and fabrication projects list"
+    },
+    "services": {
+      "schema": "Service",
+      "description": "Building and prefab structural services list"
+    },
+    "testimonials": {
+      "schema": "Testimonial",
+      "description": "Client-facing reviews list"
+    },
+    "team": {
+      "schema": "TeamMember",
+      "description": "Corporate leadership and active personnel details"
+    },
+    "industries": {
+      "schema": "Industry",
+      "description": "Sectors served under LGSF/heavy construction"
+    },
+    "certs": {
+      "schema": "Certificate",
+      "description": "Corporate ISO credentials and accreditation awards"
+    },
+    "careers": {
+      "schema": "CareerListing",
+      "description": "Active positions listed in career tab"
+    },
+    "quotes": {
+      "schema": "QuoteRequest",
+      "description": "Logged estimates requested by guests"
+    },
+    "contacts": {
+      "schema": "ContactMessage",
+      "description": "Direct communication logs"
+    },
+    "applications": {
+      "schema": "CareerApplication",
+      "description": "Active career CV submissions"
+    },
+    "partners": {
+      "schema": "PartnerCompany",
+      "description": "Partner corporate associate logos listed on the homepage"
+    },
+    "system": {
+      "schema": "SystemInfo",
+      "description": "Global brand metadata settings"
+    }
+  }
+}

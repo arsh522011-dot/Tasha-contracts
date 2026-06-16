@@ -1,4 +1,4 @@
-import { Project, Service, Testimonial, TeamMember, Certificate, CareerListing } from './types';
+import { Project, Service, Testimonial, TeamMember, Certificate, CareerListing, Industry, PartnerCompany } from './types';
 
 export const INITIAL_SERVICES: Service[] = [
   {
@@ -15,7 +15,16 @@ export const INITIAL_SERVICES: Service[] = [
     description: 'Expertise in floor-to-ceiling prefabricated building solutions featuring high structural stability, rapid delivery, and eco-friendly raw materials.',
     iconName: 'Layers',
     details: 'As seen in our project records, we are premier practitioners of high-strength LGSF. Ideal for quick, sustainable layouts ranging from multi-story residential blocks to high-altitude transit shelter facilities.',
-    features: ['Seismic and wind resistant steel frames', '70% reduction in typical construction speed', 'Laser-guided fabrication accuracy', 'Optimized thermal and sound insulation']
+    features: [
+      'Up to 70% Faster Construction',
+      'Earthquake Resistant Structures',
+      'Fire Resistant Design',
+      'Energy Efficient Buildings',
+      'Lightweight Yet High Strength',
+      'Sustainable & Eco-Friendly Materials',
+      'Minimal Site Wastage',
+      'Long Service Life'
+    ]
   },
   {
     id: 's3',
@@ -87,7 +96,17 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'Ongoing',
     description: 'Executing foundational civil works, structural scaffolding, and cooling tower system integrations for the prestigious super-thermal power generating unit under extreme compliance and safety environments.',
     client: 'SJVN Limited (Govt. of India Enterprise)',
-    beforeImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop'
+    beforeImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1581094794329-c8112a89fe12?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1428360905655-1137022f1ad0?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop'
+    ]
   },
   {
     id: 'p2',
@@ -99,7 +118,17 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'Ongoing',
     description: 'Developing high-sterile specialized laboratories, acoustic administrative zones, class floorings, and clinical fit-out works tailored for highly specialized medical academic operations.',
     client: 'Tata Medical Group',
-    beforeImage: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?q=80&w=800&auto=format&fit=crop'
+    beforeImage: 'https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?q=80&w=800&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1541746972996-4e0b0f43e01a?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?q=80&w=800&auto=format&fit=crop'
+    ]
   },
   {
     id: 'p3',
@@ -111,7 +140,17 @@ export const INITIAL_PROJECTS: Project[] = [
     status: 'Ongoing',
     description: 'Constructing high-altitude modular transit shelters using Light Gauge Steel Framing (LGSF) technology. Designed to withstand intensive seismic activity, strong alpine winds, and heavy sub-zero snowfall workloads.',
     client: 'J&K Tourism Ministry',
-    beforeImage: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop'
+    beforeImage: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1413143521251.jpg?q=80&w=800',
+      'https://images.unsplash.com/photo-1521207418485-99c705420785?q=80&w=800',
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
+      'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800',
+      'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800'
+    ]
   },
   {
     id: 'p4',
@@ -122,7 +161,17 @@ export const INITIAL_PROJECTS: Project[] = [
     image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop',
     status: 'Ongoing',
     description: 'Proud civil partner in India\'s historic administrative redesign project. Building prestigious concrete infrastructures, perimeter defenses, and underground communication corridors.',
-    client: 'CPWD, Government of India'
+    client: 'CPWD, Government of India',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800',
+      'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=800'
+    ]
   },
   {
     id: 'p5',
@@ -133,7 +182,17 @@ export const INITIAL_PROJECTS: Project[] = [
     image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop',
     status: 'Ongoing',
     description: 'Developing multi-tier institutional office complexes, sustainable rainwater capture systems, and state-of-the-art administrative plazas representing national architectural vision.',
-    client: 'Government of India Dept. of Works'
+    client: 'Government of India Dept. of Works',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800',
+      'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=800'
+    ]
   },
   // Completed Projects based on PDF clients
   {
@@ -147,7 +206,17 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Turnkey fabrication and erection of an 85,000 sq ft industrial warehousing facility using smart pre-engineered light gauge panels under rapid schedule rules.',
     client: 'Everest Industries Limited',
     beforeImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop',
-    afterImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=800&auto=format&fit=crop'
+    afterImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=800&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1581094794329-c8112a89fe12?q=80&w=800',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800',
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
+      'https://images.unsplash.com/photo-1428360905655-1137022f1ad0?q=80&w=800',
+      'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800'
+    ]
   },
   {
     id: 'p7',
@@ -160,7 +229,17 @@ export const INITIAL_PROJECTS: Project[] = [
     description: 'Constructing premium luxury eco-friendly holiday residences featuring high resistance thermal insulation and fast assembly steel chassis systems.',
     client: 'Nest-In (Tata Steel Construction Solutions)',
     beforeImage: 'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop',
-    afterImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop'
+    afterImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800',
+      'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800',
+      'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=800'
+    ]
   },
   {
     id: 'p8',
@@ -171,7 +250,17 @@ export const INITIAL_PROJECTS: Project[] = [
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop',
     status: 'Completed',
     description: 'High-end commercial fit-outs including custom glass walls, soundboards, MEP wiring, central power back-ups, and contemporary executive chambers.',
-    client: 'Ahluwalia Contracts (India) Limited'
+    client: 'Ahluwalia Contracts (India) Limited',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1541746972996-4e0b0f43e01a?q=80&w=800&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=800',
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=800',
+      'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?q=80&w=800',
+      'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=800',
+      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=800',
+      'https://images.unsplash.com/photo-1487958449943-2429e8be8625?q=80&w=800'
+    ]
   }
 ];
 
@@ -207,22 +296,40 @@ export const INITIAL_TEAM: TeamMember[] = [
     id: 'tm1',
     name: 'Mohd Arshad',
     role: 'Managing Director & Strategic Planner',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop',
-    bio: 'Pioneered Tasha Contracts India in 2015 with a vision to democratize sustainable, heavy-load structural Light Gauge Steel Framing (LGSF) and high-quality Civil contracting solutions across India.'
+    image: 'Award',
+    bio: 'Pioneered Tasha Contracts India in 2015 with a vision to democratize sustainable, heavy-load structural Light Gauge Steel Framing (LGSF) and high-quality Civil contracting solutions across India.',
+    guarantees: [
+      "Direct authority and on-time completions",
+      "100% structural framing load guarantees",
+      "Precision engineering and cost control",
+      "Uncompromising safety standards compliance"
+    ]
   },
   {
     id: 'tm2',
     name: 'Irshad Ahmed',
     role: 'Chief MEP & Operations Director',
-    image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop',
-    bio: 'Oversees complex pipeline installations, mechanical frameworks, sub-station electrical layouts, and safety compliance configurations across mega projects.'
+    image: 'Wrench',
+    bio: 'Oversees complex pipeline installations, mechanical frameworks, sub-station electrical layouts, and safety compliance configurations across mega projects.',
+    guarantees: [
+      "Optimized heavy machinery pipelines configuration",
+      "Pre-aligned industrial electrical systems layout",
+      "Zero-risk operations with safe scaffoldings",
+      "Premium high-grade non-corrosive metals"
+    ]
   },
   {
     id: 'tm3',
     name: 'Vipul Malhotra',
     role: 'Principal Structural Architect',
-    image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop',
-    bio: 'Specialist in 3D frame stress analysis, laser steel modeling, and CPWD/Government compliance drafting for national infrastructure works.'
+    image: 'HardHat',
+    bio: 'Specialist in 3D frame stress analysis, laser steel modeling, and CPWD/Government compliance drafting for national infrastructure works.',
+    guarantees: [
+      "Advanced 3D frame stress simulations reports",
+      "Govt-approved CPWD layouts drafting standard",
+      "Ultra-precise cold-rolled steel alignment",
+      "Innovative eco-villa architectural foundations"
+    ]
   }
 ];
 
@@ -321,10 +428,11 @@ export const INITIAL_SYSTEM_INFO = {
   whatsapp: '+919411955562',
   workingHours: 'Monday - Saturday: 9:00 AM - 6:30 PM',
   slogan: 'Building Trust, Delivering Excellence',
+  headerTagline: 'Make Tomorrow With Us',
   subheading: 'Professional Contracting & Construction Solutions Across India specializing in LGSF & Prefabricated Structures',
   cloudinaryCloudName: 'dpxoxrnrd', // Extracted from user's provided link!
   cloudinaryUploadPreset: 'TASHA CONTRACTS',
-  logoUrl: 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781280142/samples/radial.jpg', // Dynamic company logo url
+  logoUrl: 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781468947/squjiyig325m8hrjt8sm.png', // Dynamic company logo url
   heroVideoUrl: 'https://res.cloudinary.com/dpxoxrnrd/video/upload/v1781097285/po6wg43tokovftxnpxfa.mp4',
   heroPosterUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1920&auto=format&fit=crop',
   ctaBgUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200',
@@ -345,5 +453,95 @@ export const INITIAL_SYSTEM_INFO = {
   statHappyClientsLabel: 'Happy Clients',
   statYearsExperienceLabel: 'Years of Experience',
   statTeamMembersLabel: 'Team Members',
-  statCitiesServedLabel: 'Cities Served'
+  statCitiesServedLabel: 'Cities Served',
+  chooseTitle1: '10+ Years of Punctual Experience',
+  chooseDesc1: 'Registered in 2015, operating with deep efficiency in complex Indian infrastructure circles.',
+  chooseTitle2: 'Licensed & Government Approved',
+  chooseDesc2: 'Fully certified MSME, GST Registered with Class-A engineering safety and compliance ratios.',
+  chooseTitle3: 'Skilled Expert Team',
+  chooseDesc3: 'Dedicated engineers and trained installation teams ensure smooth execution, quality workmanship and timely project completion.',
+  chooseTitle4: 'Premium Grade LGSF Steel Framework',
+  chooseDesc4: 'Precision-engineered steel framing designed for durability, seismic resistance, dimensional accuracy and long-term structural performance.',
+  chooseTitle5: 'Guaranteed On-Time Handover',
+  chooseDesc5: 'Punctual execution that completes assemblies up to 70% faster than dynamic brick-and-mortar projects.',
+  partnersTagline: 'PARTNERING WITH THE BEST IN INDUSTRY'
 };
+
+export const INITIAL_INDUSTRIES: Industry[] = [
+  {
+    id: 'ind-1',
+    name: 'Commercial & Corporate Offices',
+    description: 'High-speed construction of premium executive offices, modern IT hubs, and business parks.',
+    iconName: 'Building2',
+    points: ['Flexible layout configurations', 'Advanced acoustics management', 'Fast-track prefabricated partitions']
+  },
+  {
+    id: 'ind-2',
+    name: 'Educational Institutions',
+    description: 'Constructing safe, durable, and thermal-regulating school classrooms, hostels, and college libraries.',
+    iconName: 'GraduationCap',
+    points: ['Eco-friendly non-toxic materials', 'Rapid construction during summer/winter breaks', 'Seismic-safe classrooms']
+  },
+  {
+    id: 'ind-3',
+    name: 'Residential Complexes & Villas',
+    description: 'Bespoke high-end modern villas, rapid housing estates, and eco-friendly structural LGSF homes.',
+    iconName: 'Home',
+    points: ['Luxury finish compatible', 'High energy-efficiency walls', 'Quick floor additions (extensibility)']
+  },
+  {
+    id: 'ind-4',
+    name: 'Defense & Transit Shelters',
+    description: 'Ultra-tough pre-engineered shelters capable of withstanding heavy snow load and extreme sub-zero climates.',
+    iconName: 'Shield',
+    points: ['Rapid military deployments', 'High altitude load tested', 'Corrosion-proof materials']
+  },
+  {
+    id: 'ind-5',
+    name: 'Healthcare & Diagnostic Labs',
+    description: 'Premium layouts tailored for heavy medical equipment, noise dampening, and clean sanitation workflows.',
+    iconName: 'HeartPulse',
+    points: ['Hygienic and bacterial-resistant boards', 'Vibration-free heavy foundations', 'Lead-shielding partition capability']
+  },
+  {
+    id: 'ind-6',
+    name: 'Hospitality & Eco-Tourism',
+    description: 'Prebuilt hill resorts, lightweight eco-cottages, and modular glass cafe frameworks.',
+    iconName: 'Palmtree',
+    points: ['Minimal ecological on-site impact', 'Custom rustic or ultra-modern aesthetics', 'Rapid modular resort assembly']
+  }
+];
+
+export const INITIAL_PARTNERS: PartnerCompany[] = [
+  {
+    id: 'partner-1',
+    name: 'EVEREST',
+    subtitle: 'Everest Industries',
+    colorClass: 'text-red-500 font-mono'
+  },
+  {
+    id: 'partner-2',
+    name: 'AHLUWALIA',
+    subtitle: 'Contracts (India) Ltd',
+    colorClass: 'text-amber-600 font-mono'
+  },
+  {
+    id: 'partner-3',
+    name: 'EPACK',
+    subtitle: 'Prefab QuickBuild',
+    colorClass: 'text-cyan-500 font-mono'
+  },
+  {
+    id: 'partner-4',
+    name: 'NEST-IN',
+    subtitle: 'Tata Steel Tech',
+    colorClass: 'text-emerald-500 font-mono'
+  },
+  {
+    id: 'partner-5',
+    name: 'PASA',
+    subtitle: 'Bonding Precision',
+    colorClass: 'text-yellow-600 font-mono'
+  }
+];
+
