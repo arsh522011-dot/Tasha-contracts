@@ -464,7 +464,22 @@ export const INITIAL_SYSTEM_INFO = {
   chooseDesc4: 'Precision-engineered steel framing designed for durability, seismic resistance, dimensional accuracy and long-term structural performance.',
   chooseTitle5: 'Guaranteed On-Time Handover',
   chooseDesc5: 'Punctual execution that completes assemblies up to 70% faster than dynamic brick-and-mortar projects.',
-  partnersTagline: 'PARTNERING WITH THE BEST IN INDUSTRY'
+  partnersTagline: 'PARTNERING WITH THE BEST IN INDUSTRY',
+  aboutSlogan: 'Pioneering Modern Construction Tech',
+  aboutTitle: 'Building the Future with LGSF & Prefabricated Construction Solutions',
+  aboutIntroHeading: 'Trusted LGSF Engineering Since 2015',
+  aboutDesc1: 'Founded in 2015, Tasha Contracts India has emerged as a trusted name in modern construction technologies. We specialize in the design, manufacturing, and execution of prefabricated buildings and Light Gauge Steel Framing (LGSF) structures, delivering innovative, sustainable, and cost-effective building solutions across India.',
+  aboutDesc2: 'With a dedicated team of engineers, project managers, and skilled professionals, we provide end-to-end solutions covering design, engineering, fabrication, installation, and project management.',
+  aboutStat1Val: '10+ Years',
+  aboutStat1Lbl: 'Experience',
+  aboutStat2Val: '200+ Sites',
+  aboutStat2Lbl: 'Delivered',
+  aboutStat3Val: 'PAN India',
+  aboutStat3Lbl: 'Service Network',
+  aboutWhyChooseTitle: 'Why Choose Tasha Contracts',
+  aboutWhyChoosePoints: 'Advanced LGSF Technology\nFaster Construction Time\nEarthquake Resistant Structures\nLightweight & Durable Buildings\nEco-Friendly Construction\nCost Effective Solutions\nTurnkey Project Execution\nExperienced Technical Team\nStrict Quality Control\nOn-Time Project Delivery',
+  aboutVision: "To become India's leading provider of innovative prefabricated and LGSF building solutions by delivering world-class quality, engineering excellence, and customer satisfaction.",
+  aboutMission: "To revolutionize the construction industry through modern technology, sustainable building practices, and efficient project execution while creating long-term value for our clients."
 };
 
 export const INITIAL_INDUSTRIES: Industry[] = [

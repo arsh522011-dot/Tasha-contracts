@@ -6,7 +6,7 @@ import {
 import { 
   Building2, Plus, Edit2, Trash2, CheckCircle, Clock, 
   Lock, Unlock, ShieldAlert, FileText, ChevronRight, Check, X, Download, Eye,
-  Briefcase, Mail, Phone, MapPin, DollarSign, Award, Users, AlertCircle, RefreshCw, Star
+  Briefcase, Mail, Phone, MapPin, DollarSign, Award, Users, AlertCircle, RefreshCw, Star, Sparkles
 } from 'lucide-react';
 import { DynamicIcon } from './Icons';
 
@@ -2674,6 +2674,191 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     className={smallInputClass}
                     placeholder="15"
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About Tasha Custom manual section settings */}
+          <div className={`p-5 rounded-2xl space-y-4 border transition-colors shadow-sm ${
+            isDark ? 'bg-slate-800/40 border-slate-700/50' : 'bg-white border-slate-200'
+          }`}>
+            <div className="flex items-center gap-2">
+              <Sparkles size={18} className="text-amber-500" />
+              <h4 className={`text-sm font-bold uppercase tracking-wider font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>"About Tasha" Section Manager</h4>
+            </div>
+            <p className={`text-xs leading-relaxed font-sans ${isDark ? 'text-slate-300' : 'text-slate-655'}`}>
+              Manually write, edit, and manage the full description, bullet perks/points, stats, and strategic statements rendered under the public <strong>"About Tasha"</strong> view tab.
+            </p>
+
+            <div className="space-y-4 font-sans text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Top Mini Slogan</label>
+                  <input
+                    type="text"
+                    value={localSystemInfo.aboutSlogan || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutSlogan: e.target.value })}
+                    className={inputClass}
+                    placeholder="Pioneering Modern Construction Tech"
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Main Bold Title</label>
+                  <input
+                    type="text"
+                    value={localSystemInfo.aboutTitle || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutTitle: e.target.value })}
+                    className={inputClass}
+                    placeholder="Building the Future with LGSF & Prefabricated Construction Solutions"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className={labelClass}>Introduction Subheading</label>
+                <input
+                  type="text"
+                  value={localSystemInfo.aboutIntroHeading || ''}
+                  onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutIntroHeading: e.target.value })}
+                  className={inputClass}
+                  placeholder="Trusted LGSF Engineering Since 2015"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className={labelClass}>Description Paragraph 1</label>
+                  <textarea
+                    rows={4}
+                    value={localSystemInfo.aboutDesc1 || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutDesc1: e.target.value })}
+                    className={inputClass}
+                    placeholder="First detailed overview paragraph..."
+                  />
+                </div>
+                <div>
+                  <label className={labelClass}>Description Paragraph 2 (Optional)</label>
+                  <textarea
+                    rows={3}
+                    value={localSystemInfo.aboutDesc2 || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutDesc2: e.target.value })}
+                    className={inputClass}
+                    placeholder="Second detailed overview paragraph (Leave empty to hide)..."
+                  />
+                </div>
+              </div>
+
+              {/* Dynamic stats values and labels */}
+              <div className={`p-4 rounded-xl border space-y-3 ${isDark ? 'bg-slate-900/50 border-slate-800' : 'bg-slate-50 border-slate-200'}`}>
+                <span className="font-bold text-amber-500 uppercase tracking-widest text-[9px] block">About Section Key Stats</span>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <label className={labelClass}>Stat 1 (Value | Label)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat1Val || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat1Val: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="10+ Years"
+                      />
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat1Lbl || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat1Lbl: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="Experience"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Stat 2 (Value | Label)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat2Val || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat2Val: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="200+ Sites"
+                      />
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat2Lbl || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat2Lbl: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="Delivered"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>Stat 3 (Value | Label)</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat3Val || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat3Val: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="PAN India"
+                      />
+                      <input
+                        type="text"
+                        value={localSystemInfo.aboutStat3Lbl || ''}
+                        onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutStat3Lbl: e.target.value })}
+                        className={smallInputClass}
+                        placeholder="Service Network"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Strategic Goals & Competitive Perks List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Competitive Perks Header (Why Choose Us Title)</label>
+                  <input
+                    type="text"
+                    value={localSystemInfo.aboutWhyChooseTitle || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutWhyChooseTitle: e.target.value })}
+                    className={inputClass}
+                    placeholder="Why Choose Tasha Contracts"
+                  />
+                  
+                  <label className={`${labelClass} mt-3`}>Competitive Perks List (One item per line - e.g. "Eco-Friendly Construction")</label>
+                  <textarea
+                    rows={8}
+                    value={localSystemInfo.aboutWhyChoosePoints || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutWhyChoosePoints: e.target.value })}
+                    className={inputClass}
+                    placeholder="Enter one highlight per line..."
+                  />
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className={labelClass}>🎯 Brand Vision Statement</label>
+                    <textarea
+                      rows={4}
+                      value={localSystemInfo.aboutVision || ''}
+                      onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutVision: e.target.value })}
+                      className={inputClass}
+                      placeholder="To become India's leading provider..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelClass}>🚀 Brand Mission Statement</label>
+                    <textarea
+                      rows={4}
+                      value={localSystemInfo.aboutMission || ''}
+                      onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, aboutMission: e.target.value })}
+                      className={inputClass}
+                      placeholder="To revolutionize the construction..."
+                    />
+                  </div>
                 </div>
               </div>
             </div>

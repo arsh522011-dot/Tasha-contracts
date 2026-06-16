@@ -1431,10 +1431,10 @@ export default function App() {
             {/* Header Slogan */}
             <div className="pb-5 max-w-4xl space-y-3 border-b border-slate-200">
               <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider flex items-center gap-1.5">
-                <Sparkles size={12} /> Pioneering Modern Construction Tech
+                <Sparkles size={12} /> {systemInfo.aboutSlogan || 'Pioneering Modern Construction Tech'}
               </span>
               <h2 className="text-3xl md:text-5xl font-black font-display tracking-tight text-slate-900 leading-tight">
-                Building the Future with LGSF & Prefabricated Construction Solutions
+                {systemInfo.aboutTitle || 'Building the Future with LGSF & Prefabricated Construction Solutions'}
               </h2>
             </div>
 
@@ -1447,29 +1447,43 @@ export default function App() {
                 {/* Introduction block */}
                 <div className="p-6 bg-white border border-slate-200 rounded-2xl shadow-md space-y-4">
                   <h3 className="text-lg font-bold font-display border-l-4 border-amber-500 pl-3 text-slate-900">
-                    Trusted LGSF Engineering Since 2015
+                    {systemInfo.aboutIntroHeading || 'Trusted LGSF Engineering Since 2015'}
                   </h3>
-                  <p className="text-sm md:text-base leading-relaxed text-slate-700">
-                    Founded in 2015, Tasha Contracts India has emerged as a trusted name in modern construction technologies. We specialize in the design, manufacturing, and execution of prefabricated buildings and Light Gauge Steel Framing (LGSF) structures, delivering innovative, sustainable, and cost-effective building solutions across India.
+                  <p className="text-sm md:text-base leading-relaxed text-slate-700 whitespace-pre-wrap">
+                    {systemInfo.aboutDesc1 || 'Founded in 2015, Tasha Contracts India has emerged as a trusted name in modern construction technologies. We specialize in the design, manufacturing, and execution of prefabricated buildings and Light Gauge Steel Framing (LGSF) structures, delivering innovative, sustainable, and cost-effective building solutions across India.'}
                   </p>
-                  <p className="text-sm leading-relaxed text-slate-600">
-                    With a dedicated team of engineers, project managers, and skilled professionals, we provide end-to-end solutions covering design, engineering, fabrication, installation, and project management.
-                  </p>
+                  {(systemInfo.aboutDesc2 || systemInfo.aboutDesc2 === undefined) && (
+                    <p className="text-sm leading-relaxed text-slate-600 whitespace-pre-wrap">
+                      {systemInfo.aboutDesc2 !== undefined ? systemInfo.aboutDesc2 : 'With a dedicated team of engineers, project managers, and skilled professionals, we provide end-to-end solutions covering design, engineering, fabrication, installation, and project management.'}
+                    </p>
+                  )}
                 </div>
 
                 {/* Strengths Grid - 3 Columns */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-center">
-                    <span className="text-2xl font-black text-amber-600 font-display block">10+ Years</span>
-                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Experience</span>
+                    <span className="text-2xl font-black text-amber-600 font-display block">
+                      {systemInfo.aboutStat1Val || '10+ Years'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">
+                      {systemInfo.aboutStat1Lbl || 'Experience'}
+                    </span>
                   </div>
                   <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-center">
-                    <span className="text-2xl font-black text-amber-600 font-display block">200+ Sites</span>
-                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Delivered</span>
+                    <span className="text-2xl font-black text-amber-600 font-display block">
+                      {systemInfo.aboutStat2Val || '200+ Sites'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">
+                      {systemInfo.aboutStat2Lbl || 'Delivered'}
+                    </span>
                   </div>
                   <div className="col-span-2 sm:col-span-1 p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1 text-center">
-                    <span className="text-xl font-bold text-slate-900 font-display block">PAN India</span>
-                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">Service Network</span>
+                    <span className="text-xl font-bold text-slate-900 font-display block">
+                      {systemInfo.aboutStat3Val || 'PAN India'}
+                    </span>
+                    <span className="text-[10px] text-slate-500 uppercase font-black tracking-wider block">
+                      {systemInfo.aboutStat3Lbl || 'Service Network'}
+                    </span>
                   </div>
                 </div>
 
@@ -1479,26 +1493,19 @@ export default function App() {
                     <CheckCircle2 size={13} className="text-amber-600" /> Strategic Competitive Edge
                   </h4>
                   <h3 className="text-lg font-black font-display text-slate-900">
-                    Why Choose Tasha Contracts
+                    {systemInfo.aboutWhyChooseTitle || 'Why Choose Tasha Contracts'}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    {[
-                      "Advanced LGSF Technology",
-                      "Faster Construction Time",
-                      "Earthquake Resistant Structures",
-                      "Lightweight & Durable Buildings",
-                      "Eco-Friendly Construction",
-                      "Cost Effective Solutions",
-                      "Turnkey Project Execution",
-                      "Experienced Technical Team",
-                      "Strict Quality Control",
-                      "On-Time Project Delivery"
-                    ].map((perk, i) => (
-                      <div key={i} className="flex items-center gap-2 bg-white/60 p-2.5 rounded-lg border border-slate-150 shadow-sm">
-                        <span className="text-amber-500 text-sm">✔️</span>
-                        <span className="font-semibold text-slate-800">{perk}</span>
-                      </div>
-                    ))}
+                    {((systemInfo.aboutWhyChoosePoints !== undefined ? systemInfo.aboutWhyChoosePoints : (INITIAL_SYSTEM_INFO.aboutWhyChoosePoints || '')) as string)
+                      .split("\n")
+                      .map((p: string) => p.trim())
+                      .filter(Boolean)
+                      .map((perk: string, i: number) => (
+                        <div key={i} className="flex items-center gap-2 bg-white/60 p-2.5 rounded-lg border border-slate-150 shadow-sm">
+                          <span className="text-amber-500 text-sm">✔️</span>
+                          <span className="font-semibold text-slate-800">{perk}</span>
+                        </div>
+                      ))}
                   </div>
                 </div>
 
@@ -1509,7 +1516,7 @@ export default function App() {
                       🎯 Vision
                     </h4>
                     <p className="text-xs leading-relaxed text-slate-600 font-medium">
-                      To become India's leading provider of innovative prefabricated and LGSF building solutions by delivering world-class quality, engineering excellence, and customer satisfaction.
+                      {systemInfo.aboutVision || "To become India's leading provider of innovative prefabricated and LGSF building solutions by delivering world-class quality, engineering excellence, and customer satisfaction."}
                     </p>
                   </div>
                   <div className="p-5 bg-white border border-slate-200 rounded-xl shadow-sm space-y-2">
@@ -1517,7 +1524,7 @@ export default function App() {
                       🚀 Mission
                     </h4>
                     <p className="text-xs leading-relaxed text-slate-600 font-medium">
-                      To revolutionize the construction industry through modern technology, sustainable building practices, and efficient project execution while creating long-term value for our clients.
+                      {systemInfo.aboutMission || "To revolutionize the construction industry through modern technology, sustainable building practices, and efficient project execution while creating long-term value for our clients."}
                     </p>
                   </div>
                 </div>
