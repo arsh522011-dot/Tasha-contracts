@@ -103,6 +103,7 @@ export async function deleteItemFromFirestore(
 
 /**
  * Saves a whole listing (replacing or overwriting).
+ * Fetches existing documents to calculate and execute deleted items sequentially.
  */
 export async function saveAllCollectionToFirestore<T extends { id: string }>(
   collectionName: string,
@@ -110,12 +111,27 @@ export async function saveAllCollectionToFirestore<T extends { id: string }>(
 ): Promise<void> {
   const path = collectionName;
   try {
-    // Standard batch write to align fast updates
+    // 1. Fetch current cloud documents to see what has been deleted locally
+    const querySnapshot = await getDocs(collection(db, path));
+    const cloudIds = querySnapshot.docs.map(doc => doc.id);
+    const itemIds = new Set(items.map(item => item.id));
+
+    // 2. Standard batch write to align fast updates and deletions
     const batch = writeBatch(db);
+
+    // Delete items that exist in our database but not in the modified local dataset
+    cloudIds.forEach((id) => {
+      if (!itemIds.has(id)) {
+        batch.delete(doc(db, path, id));
+      }
+    });
+
+    // Write/update current items
     items.forEach((item) => {
       const { id, ...data } = item;
       batch.set(doc(db, path, id), data);
     });
+
     await batch.commit();
     console.log(`Synced batch state successfully to "${path}".`);
   } catch (error) {
