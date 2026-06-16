@@ -2690,7 +2690,7 @@ export default function App() {
               Established 2015. Trustworthy engineering corporate, specializing in fast, premium LGSF and structural Prefabricated solutions. Delivering excellence across national circles.
             </p>
             <div className="space-y-1">
-              <p className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Headquarters (Amroha):</p>
+              <p className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{systemInfo.hqLabel || 'Headquarters (Amroha):'}</p>
               <p className="text-[11px] font-medium">{systemInfo.address}</p>
             </div>
           </div>

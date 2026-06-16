@@ -2316,6 +2316,46 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </div>
           )}
 
+          <div className="p-4 bg-slate-50 border border-slate-200 dark:bg-slate-900/50 dark:border-slate-800 rounded-xl space-y-3">
+            <span className="font-bold text-amber-500 uppercase tracking-widest text-[9px] block">Corporate Identity Logo</span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className={labelClass}>Company Logo Image Link / Source URL</label>
+                <div className="flex gap-2 mt-1">
+                  <input
+                    type="text"
+                    placeholder="Provide image URL link or use quick uploader"
+                    value={localSystemInfo.logoUrl || ''}
+                    onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, logoUrl: e.target.value })}
+                    className={inputClass}
+                  />
+                  <CloudinaryUploadButton 
+                    onSuccess={(url) => setLocalSystemInfo({ ...localSystemInfo, logoUrl: url })}
+                    label="Upload Logo" 
+                  />
+                </div>
+                <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400 font-sans">
+                  This logo is displayed in the navigation bar and footer throughout the website.
+                </p>
+              </div>
+              <div className="flex flex-col justify-center">
+                <span className="text-[10px] text-slate-500 mb-1 font-semibold font-sans uppercase">Active Logo Preview:</span>
+                {localSystemInfo.logoUrl ? (
+                  <div className={`p-2.5 rounded-xl border flex items-center justify-center h-20 w-48 ${isDark ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200 shadow-sm'}`}>
+                    <img 
+                      src={localSystemInfo.logoUrl} 
+                      alt="Company Logo Preview" 
+                      className="max-h-full max-w-full object-contain"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                ) : (
+                  <p className="text-xs text-rose-500 font-medium">No logo configured.</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Company Executive Title</label>
@@ -2384,6 +2424,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, address: e.target.value })}
               className={inputClass}
             />
+          </div>
+
+          <div>
+            <label className={labelClass}>Headquarters Label text (Footer / Contact Info)</label>
+            <input
+              type="text"
+              placeholder="e.g. Headquarters (Amroha):"
+              value={localSystemInfo.hqLabel || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, hqLabel: e.target.value })}
+              className={inputClass}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              Label displayed next to/above the address in the footer description.
+            </p>
+          </div>
+
+          <div>
+            <label className={labelClass}>Operating Working Hours</label>
+            <input
+              type="text"
+              placeholder="e.g. Monday - Saturday: 9:00 AM - 6:30 PM"
+              value={localSystemInfo.workingHours || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, workingHours: e.target.value })}
+              className={inputClass}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              The operational working hours displayed in the footer and contact sections of the website.
+            </p>
           </div>
 
           <div>
