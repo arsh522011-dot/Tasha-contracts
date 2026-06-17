@@ -2458,6 +2458,48 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
 
           <div>
+            <label className={labelClass}>Emergency Support Headline</label>
+            <input
+              type="text"
+              placeholder="e.g. Emergency Support: 24/7 client hotline"
+              value={localSystemInfo.emergencySupport || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, emergencySupport: e.target.value })}
+              className={inputClass}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              Emergency support subtitle/hours text shown in the Contact section.
+            </p>
+          </div>
+
+          <div>
+            <label className={labelClass}>Office Map Card title / header</label>
+            <input
+              type="text"
+              placeholder="e.g. Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh)"
+              value={localSystemInfo.mapHeader || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, mapHeader: e.target.value })}
+              className={inputClass}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              Title printed above the Map Satellite card simulation.
+            </p>
+          </div>
+
+          <div>
+            <label className={labelClass}>Office Map Technical Description / Details</label>
+            <textarea
+              rows={2}
+              placeholder="e.g. Tasha Contracts Corporate Headquarters & Estimation Workshop. Near National Highway Transit, Uttar Pradesh, India."
+              value={localSystemInfo.mapDescription || ''}
+              onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, mapDescription: e.target.value })}
+              className={`${inputClass} font-sans`}
+            />
+            <p className="text-[10px] text-slate-500 mt-1 dark:text-gray-400">
+              Descriptive coordinates or location details shown inside the Map Satellite box.
+            </p>
+          </div>
+
+          <div>
             <label className={labelClass}>Homepage Premium Banner Headline</label>
             <input
               type="text"

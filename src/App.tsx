@@ -2104,7 +2104,7 @@ export default function App() {
                 }`}>
                   <h4 className={`font-bold uppercase font-display ${isDark ? 'text-white' : 'text-slate-950 text-sm'}`}>Operating Hours</h4>
                   <p className={isDark ? 'text-gray-400' : 'text-slate-650'}>{systemInfo.workingHours}</p>
-                  <p className="text-[10px] text-gray-500 uppercase font-bold">Emergency Support: 24/7 client hotline</p>
+                  <p className="text-[10px] text-gray-500 uppercase font-bold">{systemInfo.emergencySupport || "Emergency Support: 24/7 client hotline"}</p>
                 </div>
 
                 {/* Mock Google Map Simulator */}
@@ -2112,7 +2112,7 @@ export default function App() {
                   isDark ? 'bg-slate-800/10 border-slate-800Text' : 'bg-white border-slate-200 shadow-md'
                 }`}>
                   <h4 className={`font-bold uppercase flex items-center gap-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    <MapPin size={14} className="text-amber-500" /> Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh)
+                    <MapPin size={14} className="text-amber-500" /> {systemInfo.mapHeader || "Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh)"}
                   </h4>
                   
                   <div className={`h-44 border rounded-xl relative overflow-hidden flex items-center justify-center text-center p-4 ${
@@ -2122,7 +2122,7 @@ export default function App() {
                     <div className="relative z-10 space-y-2">
                       <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 font-bold text-[9px] uppercase rounded">MAP SATELLITE</span>
                       <p className={`text-[10px] leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-600'}`}>
-                        Tasha Contracts Corporate Headquarters & Estimation Workshop. Near National Highway Transit, Uttar Pradesh, India.
+                        {systemInfo.mapDescription || "Tasha Contracts Corporate Headquarters & Estimation Workshop. Near National Highway Transit, Uttar Pradesh, India."}
                       </p>
                       <button 
                         onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(systemInfo.address)}`, '_blank')}
