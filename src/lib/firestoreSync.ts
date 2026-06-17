@@ -10,6 +10,27 @@ import {
 import { db, handleFirestoreError, OperationType } from "./firebase";
 
 /**
+ * Helper to clean objects recursively, removing undefined values before sending to Firestore
+ */
+function cleanObjectForFirestore(obj: any): any {
+  if (obj === null || obj === undefined) return null;
+  if (Array.isArray(obj)) {
+    return obj.map(item => cleanObjectForFirestore(item));
+  }
+  if (typeof obj === 'object') {
+    const cleaned: any = {};
+    for (const key of Object.keys(obj)) {
+      const val = obj[key];
+      if (val !== undefined) {
+        cleaned[key] = cleanObjectForFirestore(val);
+      }
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
+/**
  * Fetches an entire collection from Firestore. 
  * If it doesn't exist or is empty in Firestore, it optionally populates it with default seed data.
  */
@@ -59,7 +80,7 @@ export async function seedCollectionToFirestore<T extends { id: string }>(
       const docRef = doc(db, path, item.id);
       // Remove or keep exact fields
       const { id, ...data } = item;
-      batch.set(docRef, data);
+      batch.set(docRef, cleanObjectForFirestore(data));
     });
     await batch.commit();
     console.log(`Seeded matching "${path}" records successfully to Cloud Firestore.`);
@@ -78,7 +99,7 @@ export async function saveItemToFirestore<T extends { id: string }>(
   const path = collectionName;
   try {
     const { id, ...data } = item;
-    await setDoc(doc(db, path, id), data);
+    await setDoc(doc(db, path, id), cleanObjectForFirestore(data));
     console.log(`Saved "${path}/${id}" to live cloud database.`);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${path}/${item.id}`);
@@ -129,7 +150,7 @@ export async function saveAllCollectionToFirestore<T extends { id: string }>(
     // Write/update current items
     items.forEach((item) => {
       const { id, ...data } = item;
-      batch.set(doc(db, path, id), data);
+      batch.set(doc(db, path, id), cleanObjectForFirestore(data));
     });
 
     await batch.commit();
@@ -151,7 +172,8 @@ export async function fetchSystemInfoFromFirestore(defaultSystem: any): Promise<
       return docSnap.data();
     } else {
       console.log("No live system config document in Firestore. Initializing with defaults...");
-      await setDoc(doc(db, path, docId), defaultSystem);
+      const cleanedDefault = cleanObjectForFirestore(defaultSystem);
+      await setDoc(doc(db, path, docId), cleanedDefault);
       return defaultSystem;
     }
   } catch (error) {
@@ -172,7 +194,7 @@ export async function saveSystemInfoToFirestore(systemInfo: any): Promise<void> 
   const path = "system";
   const docId = "config";
   try {
-    await setDoc(doc(db, path, docId), systemInfo);
+    await setDoc(doc(db, path, docId), cleanObjectForFirestore(systemInfo));
     console.log("Synchronized global system branding metadata to Live cloud storage.");
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${path}/${docId}`);

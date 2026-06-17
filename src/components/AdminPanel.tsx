@@ -484,8 +484,10 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // --- CRUD Projects ---
   const handleSaveProject = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingProject?.title || !editingProject.category) return;
+    const title = editingProject?.title?.trim();
+    if (!title) return;
 
+    const category = editingProject.category || 'Civil Construction';
     const processedGallery = (editingProject.galleryImages || [])
       .map(img => img.trim())
       .filter(Boolean);
@@ -494,6 +496,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       // Edit
       const updated = projects.map(p => p.id === editingProject.id ? {
         ...(editingProject as Project),
+        category: category as any,
         galleryImages: processedGallery
       } : p);
       onUpdateProjects(updated);
@@ -501,8 +504,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       // Create
       const newProj: Project = {
         id: 'p_' + Date.now(),
-        title: editingProject.title,
-        category: editingProject.category as any,
+        title: title,
+        category: category as any,
         location: editingProject.location || 'India',
         completionDate: editingProject.completionDate || 'Ongoing',
         image: editingProject.image || 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800',
@@ -1282,7 +1285,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           <div className="flex justify-between items-center bg-slate-800/30 p-3.5 rounded-xl">
             <span className="text-xs text-gray-300 font-semibold">{projects.length} total designs on display</span>
             <button
-              onClick={() => setEditingProject({})}
+              onClick={() => setEditingProject({ category: 'Civil Construction', status: 'Ongoing' })}
               className="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-lg flex items-center gap-1 uppercase tracking-wide cursor-pointer"
             >
               <Plus size={14} /> Add Project
