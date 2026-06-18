@@ -200,7 +200,7 @@ export const QuoteForm: React.FC<QuoteFormProps> = ({ onQuoteSubmit, themeMode }
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            placeholder="Mohd Arshad"
+            placeholder="Mr. Jackson"
             required
             className={inputClass}
           />

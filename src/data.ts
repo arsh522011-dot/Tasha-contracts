@@ -294,7 +294,7 @@ export const INITIAL_TESTIMONIALS: Testimonial[] = [
 export const INITIAL_TEAM: TeamMember[] = [
   {
     id: 'tm1',
-    name: 'Mohd Arshad',
+    name: 'Mr. Jackson',
     role: 'Managing Director & Strategic Planner',
     image: 'Award',
     bio: 'Pioneered Tasha Contracts India in 2015 with a vision to democratize sustainable, heavy-load structural Light Gauge Steel Framing (LGSF) and high-quality Civil contracting solutions across India.',
@@ -442,7 +442,7 @@ export const INITIAL_SYSTEM_INFO = {
   heroPosterUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1920&auto=format&fit=crop',
   ctaBgUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1200',
   mapBgUrl: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=400',
-  founderName: 'Mohd Arshad',
+  founderName: 'Mr. Jackson',
   founderRole: 'Managing Director & Founder',
   founderImage: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400',
   founderBio: '"Establishing Tasha Contracts India in 2015 meant building an ethical construction collective respect for labor, punctuality, and pioneering state-of-the-art pre-engineered structural steel foundations."',

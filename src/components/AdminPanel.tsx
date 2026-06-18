@@ -2561,7 +2561,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <label className={labelClass}>Founder Full Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Mohd Arshad"
+                  placeholder="e.g. Mr. Jackson"
                   value={localSystemInfo.founderName || ''}
                   onChange={(e) => setLocalSystemInfo({ ...localSystemInfo, founderName: e.target.value })}
                   className={inputClass}
@@ -3190,7 +3190,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Mohd Arshad or Safety Incharge / Supervisor"
+                      placeholder="e.g. Mr. Jackson or Safety Incharge / Supervisor"
                       value={newTeamMemberName}
                       onChange={(e) => setNewTeamMemberName(e.target.value)}
                       className={inputClass}
@@ -3932,7 +3932,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Mohd Arshad"
+                      placeholder="e.g. Mr. Jackson"
                       value={newTestimonialName}
                       onChange={(e) => setNewTestimonialName(e.target.value)}
                       className={inputClass}
@@ -4032,7 +4032,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Mohd Arshad"
+                      placeholder="e.g. Mr. Jackson"
                       value={editingTestimonial.clientName || ''}
                       onChange={(e) => setEditingTestimonial({ ...editingTestimonial, clientName: e.target.value })}
                       className={inputClass}

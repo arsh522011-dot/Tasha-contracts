@@ -199,7 +199,7 @@ export const CareersSection: React.FC<CareersSectionProps> = ({ careers, onApply
                     required
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    placeholder="e.g. Mohd Arshad"
+                    placeholder="e.g. Mr. Jackson"
                     className={`w-full px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 ${
                       isDark 
                         ? 'bg-slate-900 border border-slate-700 text-white focus:border-amber-500' 
