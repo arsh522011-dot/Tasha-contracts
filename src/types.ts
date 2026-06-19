@@ -20,6 +20,8 @@ export interface Service {
   iconName: string; // Lucide icon identifier
   details: string;
   features: string[];
+  seoTitle?: string;
+  seoDescription?: string;
 }
 
 export interface Testimonial {

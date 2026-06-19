@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Building2, Phone, Mail, MapPin, Clock, Send, 
-  CheckCircle2, ArrowRight, ShieldCheck, Download, Award,
+  CheckCircle2, ArrowRight, ShieldCheck, Download, Award, Shield,
   Users, HelpCircle, Layers, Calendar, ChevronRight, Search, Filter,
   PhoneCall, Star, Quote, Eye, ArrowUpRight, Check, Sparkles, Sun, Moon, Menu, X,
-  Lock, Scale, Video
+  Lock, Scale, Video, ArrowLeft
 } from 'lucide-react';
 
 import { Project, Service, Testimonial, TeamMember, Certificate, CareerListing, QuoteRequest, ContactMessage, CareerApplication, Industry, PartnerCompany } from './types';
@@ -44,6 +44,7 @@ export default function App() {
   // Multi-page navigation state
   const [showSplash, setShowSplash] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('home');
+  const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   // Core synchronized application state
@@ -59,6 +60,138 @@ export default function App() {
   const [applications, setApplications] = useState<CareerApplication[]>([]);
   const [systemInfo, setSystemInfo] = useState<any>(INITIAL_SYSTEM_INFO);
   const [partners, setPartners] = useState<PartnerCompany[]>([]);
+
+  // Dynamic SEO Title and Meta Description state manager based on navigation page and sub-services
+  useEffect(() => {
+    let title = "Tasha Contracts India | Premium Pre-engineered LGSF & Civil Infrastructure Works";
+    let description = "Tasha Contracts India is a leading service provider specializing in prefabricated LGSF industrial sheds, pre-engineered buildings, portable cabins, and robust civil construction corporate offices across Uttar Pradesh & India.";
+    let keywords = "Tasha Contracts, Tasha Contracts India, LGSF, Prefabricated Industrial Sheds, Pre-engineered Buildings, Portable Cabins, Civil Construction, Amroha, Uttar Pradesh";
+
+    if (activeTab === 'home') {
+      title = "Tasha Contracts India | Premium Pre-engineered LGSF & Civil Infrastructure Works";
+      description = "Pioneering sustainable, heavy-load structural Light Gauge Steel Framing (LGSF) and high-quality civil contracting services across India since 2015.";
+    } else if (activeTab === 'about') {
+      title = "About Us & Quality Assurance | Tasha Contracts India ";
+      description = "Learn about Tasha Contracts India, founded in 2015 by Mr. Jackson. Read our mission, high compliance engineering standards, and vision for LGSF & civil construction.";
+    } else if (activeTab === 'projects') {
+      title = "Completed PEB & LGSF Construction Projects Gallery | Tasha Contracts";
+      description = "Browse our engineering portfolio of completed and ongoing heavy-load LGSF structures, industrial facilities, power plants, and corporate hubs across India.";
+    } else if (activeTab === 'team') {
+      title = "Our Leadership, Engineers & Estimations Team | Tasha Contracts";
+      description = "Meet the certified structural designers, civil engineers, safety managers, and directors of Tasha Contracts committed to punctual, ISO-compliant handovers.";
+    } else if (activeTab === 'contact') {
+      title = "Get a Quote & Building Estimate | Tasha Contracts India Contact";
+      description = "Contact Tasha Contracts India. Submit your blueprints, drawings, budget, or land size, and get a professional engineering consultation and cost blueprint.";
+    } else if (activeTab === 'privacy') {
+      title = "Privacy Policy & Data Security Compliance | Tasha Contracts India";
+      description = "Read our standard user privacy and data security declarations matching construction services guidelines.";
+    } else if (activeTab === 'terms') {
+      title = "Terms of Service & General Contracting Agreement | Tasha Contracts";
+      description = "Review our contractual service declarations, safety regulations, and project warranty terms.";
+    } else if (activeTab === 'services') {
+      if (activeServiceId) {
+        const selected = services.find(s => s.id === activeServiceId);
+        if (selected) {
+          title = selected.seoTitle || `${selected.name} | Tasha Contracts India`;
+          description = selected.seoDescription || selected.description;
+          keywords = `${selected.name}, ${keywords}`;
+        }
+      } else {
+        title = "Our Turnkey Heavy Infrastructure & LGSF Services | Tasha Contracts India";
+        description = "Discover our turnkey services including LGSF Construction, Industrial Facilities structures, Warehouses & Logistics Parks, Project Management, and specialized HR Services.";
+      }
+    }
+
+    // Set Document Title
+    document.title = title;
+
+    // Dynamically update or create head meta tag helpers
+    const updateMetaTag = (name: string, content: string, isProperty = false) => {
+      const attr = isProperty ? 'property' : 'name';
+      let element = document.querySelector(`meta[${attr}="${name}"]`);
+      if (!element) {
+        element = document.createElement('meta');
+        element.setAttribute(attr, name);
+        document.head.appendChild(element);
+      }
+      element.setAttribute('content', content);
+    };
+
+    updateMetaTag('description', description);
+    updateMetaTag('keywords', keywords);
+    
+    // Add Open Graph & Twitter Card support for advanced optimization
+    updateMetaTag('og:title', title, true);
+    updateMetaTag('og:description', description, true);
+    updateMetaTag('og:url', window.location.href, true);
+    updateMetaTag('og:type', 'website', true);
+    updateMetaTag('twitter:title', title);
+    updateMetaTag('twitter:description', description);
+  }, [activeTab, activeServiceId, services]);
+
+  // Dynamic Construction Company JSON-LD Schema injection
+  useEffect(() => {
+    let scriptId = 'tasha-contracts-schema';
+    let script = document.getElementById(scriptId) as HTMLScriptElement;
+    
+    if (!script) {
+      script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'application/ld+json';
+      document.head.appendChild(script);
+    }
+
+    const servicesCatalog = services.map((s, index) => ({
+      "@type": "Offer",
+      "position": index + 1,
+      "itemOffered": {
+        "@type": "Service",
+        "name": s.name,
+        "description": s.description,
+        "url": `https://tashacontractsindia.com/?service=${s.id}`
+      }
+    }));
+
+    const schemaData = {
+      "@context": "https://schema.org",
+      "@type": "ConstructionBusiness",
+      "name": "Tasha Contracts India",
+      "alternateName": "Tasha Contracts",
+      "url": "https://tashacontractsindia.com/",
+      "logo": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=400",
+      "image": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800",
+      "description": "Tasha Contracts India is a premium engineering contracting company specializing in high-strength LGSF construction, prefabricated industrial facilities, warehouses, logistics parks, project management, and specialized HR services.",
+      "foundingDate": "2015",
+      "founder": {
+        "@type": "Person",
+        "name": "Mr. Jackson",
+        "jobTitle": "Founder & Managing Director"
+      },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ujhari",
+        "addressRegion": "Uttar Pradesh",
+        "addressCountry": "IN"
+      },
+      "areaServed": "IN",
+      "knowsAbout": [
+        "Light Gauge Steel Framing (LGSF)",
+        "LGSF Construction",
+        "Industrial Facilities Construction",
+        "Warehouse Building",
+        "Logistics Park Engineering",
+        "Construction Project Management",
+        "Workforce & HR Service Solutions"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "General & Pre-engineered Construction Services",
+        "itemListElement": servicesCatalog
+      }
+    };
+
+    script.textContent = JSON.stringify(schemaData, null, 2);
+  }, [services]);
 
   // Search and filter states for projects
   const [projectFilterCategory, setProjectFilterCategory] = useState<string>('All');
@@ -1629,98 +1762,287 @@ export default function App() {
              3. SERVICES SEGMENT VIEW 
            ============================================== */}
         {activeTab === 'services' && (
-          <motion.div 
-            key="services"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
-            className="space-y-12 animate-fade-in-up"
-          >
-            
-            <div className={`pb-5 max-w-3xl space-y-3.5 border-b text-left ${isDark ? 'border-slate-850' : 'border-slate-200'}`}>
-              <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
-                Industrial Capabilities
-              </span>
-              <h2 className={`text-2xl md:text-4xl font-black font-display tracking-tight leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Turnkey Structural Contracting & Engineering
-              </h2>
-              <p className={`text-sm md:text-base leading-relaxed font-sans ${isDark ? 'text-gray-405 font-light' : 'text-slate-650'}`}>
-                From concept and approvals to manufacturing, erection and handover, we provide complete turnkey construction services under one roof.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {services.map((service) => (
-                <div 
-                  key={service.id} 
-                  className={`p-6 rounded-2xl space-y-4 hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group border ${
-                    isDark 
-                      ? 'bg-slate-800/10 border-slate-700/30' 
-                      : 'bg-white border-slate-200 shadow-md hover:shadow-lg'
-                  }`}
-                >
-                  <div className="space-y-3">
-                    <div className={`w-12 h-12 flex items-center justify-center rounded-xl p-3 border transition-colors ${
-                      isDark 
-                        ? 'bg-slate-900 border-slate-700 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950' 
-                        : 'bg-amber-50 border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-slate-950'
-                    }`}>
-                      <DynamicIcon name={service.iconName} size={22} />
-                    </div>
-
-                    <h3 className={`text-xl font-bold font-display group-hover:text-amber-500 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      {service.name}
-                    </h3>
-
-                    <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-650 font-medium'}`}>
-                      {service.description}
-                    </p>
-
-                    <div className={`p-3 rounded-lg border text-[11px] ${
-                      isDark ? 'bg-slate-900/30 border-slate-800/50 text-gray-405' : 'bg-slate-50 border-slate-150 text-slate-600'
-                    }`}>
-                      <strong>Scope:</strong> {service.details}
-                    </div>
-                  </div>
-
-                  <div className={`pt-4 border-t space-y-2 ${isDark ? 'border-slate-800/50' : 'border-slate-150'}`}>
-                    <span className="text-[10px] uppercase font-extrabold text-amber-500 tracking-widest block">
-                      Guarantees:
-                    </span>
-                    <ul className="space-y-1.5 text-xs">
-                      {(service.features || []).map((feature, i) => (
-                        <li key={i} className={`flex items-center gap-1.5 ${isDark ? 'text-gray-450' : 'text-slate-600 font-bold'}`}>
-                          <CheckCircle2 size={12} className="text-emerald-500" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                </div>
-              ))}
-            </div>
-
-            {/* Quote Request CTA section */}
-            <div className={`p-8 text-center rounded-2xl max-w-3xl mx-auto space-y-4 border ${
-              isDark 
-                ? 'bg-slate-850/20 border-amber-500/10' 
-                : 'bg-white border-slate-205 shadow-md'
-            }`}>
-              <h3 className={`text-lg font-bold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>Require Custom CAD Design Estimations?</h3>
-              <p className={`text-xs leading-relaxed max-w-xl mx-auto ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
-                Tasha Contracts India implements deep compliance engineering audits. Let our Estimations Office review your blueprints and budget criteria to form a proposal.
-              </p>
-              <button
-                onClick={() => setActiveTab('contact')}
-                className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer shadow-sm transition-all"
+          <div className="space-y-12">
+            {!activeServiceId ? (
+              <motion.div 
+                key="services-list"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-12"
               >
-                Launch Estimate Builder
-              </button>
-            </div>
+                <div className={`pb-5 max-w-3xl space-y-3.5 border-b text-left ${isDark ? 'border-slate-850' : 'border-slate-200'}`}>
+                  <span className="text-xs uppercase font-extrabold text-amber-600 tracking-wider">
+                    Industrial Capabilities
+                  </span>
+                  <h2 className={`text-2xl md:text-4xl font-black font-display tracking-tight leading-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    Turnkey Structural Contracting & Engineering
+                  </h2>
+                  <p className={`text-sm md:text-base leading-relaxed font-sans ${isDark ? 'text-gray-450 font-medium' : 'text-slate-650 font-medium'}`}>
+                    From concept and approvals to manufacturing, erection and handover, we provide complete turnkey construction services under one roof. Click on any of our services to view its dedicated, SEO-optimized highlight page.
+                  </p>
+                </div>
 
-          </motion.div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                  {services.map((service) => (
+                    <div 
+                      key={service.id} 
+                      onClick={() => setActiveServiceId(service.id)}
+                      className={`p-6 rounded-2xl space-y-4 hover:border-amber-500 transition-all duration-300 flex flex-col justify-between group border cursor-pointer ${
+                        isDark 
+                          ? 'bg-slate-800/10 border-slate-700/30' 
+                          : 'bg-white border-slate-200 shadow-sm hover:shadow-md'
+                      }`}
+                    >
+                      <div className="space-y-3">
+                        <div className={`w-12 h-12 flex items-center justify-center rounded-xl p-3 border transition-colors ${
+                          isDark 
+                            ? 'bg-slate-900 border-slate-700 text-amber-400 group-hover:bg-amber-500 group-hover:text-slate-950' 
+                            : 'bg-amber-50 border-amber-100 text-amber-600 group-hover:bg-amber-500 group-hover:text-slate-950'
+                        }`}>
+                          <DynamicIcon name={service.iconName} size={22} />
+                        </div>
+
+                        <h3 className={`text-lg font-black font-display group-hover:text-amber-600 transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                          {service.name}
+                        </h3>
+
+                        <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-600 font-medium Line-clamp-3'}`}>
+                          {service.description}
+                        </p>
+
+                        <div className={`p-3 rounded-lg border text-[11px] ${
+                          isDark ? 'bg-slate-900/30 border-slate-800/50 text-gray-405' : 'bg-slate-50 border-slate-150 text-slate-600'
+                        }`}>
+                          <strong>Scope:</strong> {service.details}
+                        </div>
+                      </div>
+
+                      <div className={`pt-4 border-t space-y-3 ${isDark ? 'border-slate-800/50' : 'border-slate-150'}`}>
+                        <div className="space-y-1">
+                          <span className="text-[10px] uppercase font-extrabold text-amber-500 tracking-widest block">
+                            Key Guarantees:
+                          </span>
+                          <ul className="space-y-1 text-xs">
+                            {(service.features || []).slice(0, 3).map((feature, i) => (
+                              <li key={i} className={`flex items-center gap-1.5 ${isDark ? 'text-gray-450' : 'text-slate-600 font-bold line-clamp-1'}`}>
+                                <CheckCircle2 size={12} className="text-emerald-505" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        
+                        <div className="text-xs font-black uppercase text-amber-600 tracking-widest flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                          View Detailed Service Page <ArrowRight size={13} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Quote Request CTA section */}
+                <div className={`p-8 text-center rounded-2xl max-w-3xl mx-auto space-y-4 border ${
+                  isDark 
+                    ? 'bg-slate-850/20 border-amber-500/10' 
+                    : 'bg-white border-slate-205 shadow-md'
+                }`}>
+                  <h3 className={`text-lg font-bold font-display ${isDark ? 'text-white' : 'text-slate-900'}`}>Require Custom CAD Design Estimations?</h3>
+                  <p className={`text-xs leading-relaxed max-w-xl mx-auto ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                    Tasha Contracts India implements deep compliance engineering audits. Let our Estimations Office review your blueprints and budget criteria to form a proposal.
+                  </p>
+                  <button
+                    onClick={() => setActiveTab('contact')}
+                    className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer shadow-sm transition-all"
+                  >
+                    Launch Estimate Builder
+                  </button>
+                </div>
+              </motion.div>
+            ) : (() => {
+              const service = services.find(s => s.id === activeServiceId);
+              if (!service) return null;
+              
+              // Filter related projects dynamically
+              const relatedProjects = projects.filter(p => {
+                const serviceWords = service.name.toLowerCase().split(' ');
+                const hasMatchingWord = serviceWords.some(word => 
+                  word.length > 3 && (p.title.toLowerCase().includes(word) || p.description.toLowerCase().includes(word))
+                );
+                if (hasMatchingWord) return true;
+                if (service.name.toLowerCase().includes('lgsf') && (p.category === 'LGSF / Prefabricated')) return true;
+                if (service.name.toLowerCase().includes('industrial') && (p.category === 'Civil Construction' || p.title.toLowerCase().includes('thermal') || p.title.toLowerCase().includes('power') || p.title.toLowerCase().includes('plant'))) return true;
+                if (p.category.toLowerCase().split(' ')[0] === service.name.toLowerCase().split(' ')[0]) return true;
+                return false;
+              }).slice(0, 3);
+
+              return (
+                <motion.div 
+                  key="service-detail"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-8 text-left animate-fade-in-up"
+                >
+                  {/* Floating Breadcrumb Header */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-205">
+                    <button 
+                      onClick={() => setActiveServiceId(null)}
+                      className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs uppercase text-slate-700 tracking-wider transition-all cursor-pointer border border-slate-200"
+                    >
+                      <ArrowLeft size={14} /> Back to Services Catalog
+                    </button>
+                    <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-500">
+                      <span>Our Services</span>
+                      <span>/</span>
+                      <span className="text-amber-600 uppercase font-extrabold">{service.name}</span>
+                    </div>
+                  </div>
+
+                  {/* Service Hero Badge container */}
+                  <div className="relative p-8 md:p-12 rounded-3xl overflow-hidden border border-slate-200 bg-slate-950 text-white shadow-xl">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 text-amber-500 pointer-events-none">
+                      <DynamicIcon name={service.iconName} size={150} />
+                    </div>
+                    <div className="max-w-3xl space-y-4 relative z-10">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-extrabold tracking-widest uppercase">
+                        Service Highlight Page
+                      </div>
+                      <h1 className="text-3xl md:text-5xl font-black font-display tracking-tight text-white leading-tight">
+                        {service.name}
+                      </h1>
+                      <p className="text-sm md:text-lg text-slate-300 leading-relaxed font-light">
+                        {service.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Unique Page SEO Header Panel - transparently showing the optimized head changes to search bots & indexers */}
+                  <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/20 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <div className="text-[10px] uppercase font-extrabold text-amber-600 tracking-wider">Dynamic Meta Title:</div>
+                      <div className="text-xs font-mono font-bold text-slate-800">{service.seoTitle || `${service.name} | Tasha Contracts India`}</div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="text-[10px] uppercase font-extrabold text-amber-600 tracking-wider">Dynamic Meta Description:</div>
+                      <p className="text-xs font-sans text-slate-600 leading-relaxed">{service.seoDescription || service.description}</p>
+                    </div>
+                  </div>
+
+                  {/* 2-Column Core Features grid */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-6">
+                      <div className="p-6 md:p-8 rounded-2xl bg-white border border-slate-205 shadow-xs space-y-4">
+                        <h3 className="text-xl font-bold font-display text-slate-900 flex items-center gap-2">
+                          <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span> 
+                          Core Structural Scope & Details
+                        </h3>
+                        <p className="text-sm text-slate-650 leading-relaxed font-sans whitespace-pre-line">
+                          {service.details}
+                        </p>
+                      </div>
+
+                      <div className="p-6 md:p-8 rounded-2xl bg-white border border-slate-205 shadow-xs space-y-4">
+                        <h3 className="text-lg font-bold font-display text-slate-900">
+                          Standard Quality Guarantees & Certifications:
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {(service.features || []).map((feature, i) => (
+                            <div key={i} className="flex gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-150 items-start">
+                              <CheckCircle2 size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                              <div className="text-xs font-bold text-slate-700 leading-normal">{feature}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right side: Action CTAs and Estimation Inquiry */}
+                    <div className="space-y-6 text-left">
+                      <div className="p-6 rounded-2xl bg-slate-900 text-white space-y-4 border border-slate-800 shadow-md">
+                        <h4 className="text-md font-bold font-display text-amber-400">Request Project Estimate</h4>
+                        <p className="text-xs text-slate-400 leading-relaxed">
+                          We offer full CAD blueprints evaluation and dynamic feasibility calculations for {service.name} services. Let our direct estimations desk contact you in 24 hours.
+                        </p>
+                        <button
+                          onClick={() => {
+                            setContactForm({
+                              ...contactForm,
+                              subject: `Inquiry regarding ${service.name} services`
+                            });
+                            setActiveTab('contact');
+                          }}
+                          className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer transition-all flex items-center justify-center gap-2 shadow-xs font-extrabold"
+                        >
+                          Launch Quote Builder <ArrowRight size={14} />
+                        </button>
+                      </div>
+
+                      {/* Trust Badge Indicators */}
+                      <div className="p-6 rounded-2xl bg-white border border-slate-205 shadow-sm space-y-4">
+                        <h4 className="text-xs uppercase font-extrabold text-slate-505 tracking-wider">Compliance Matrix</h4>
+                        <div className="space-y-3.5">
+                          <div className="flex gap-3 items-start">
+                            <Shield className="text-amber-500 mt-0.5 shrink-0" size={16} />
+                            <div>
+                              <div className="text-xs font-bold text-slate-900">Safety Compliant</div>
+                              <p className="text-[11px] text-slate-550">ISO 45001 Standard safety audits applied to all project zones.</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3 items-start">
+                            <Award className="text-amber-500 mt-0.5 shrink-0" size={16} />
+                            <div>
+                              <div className="text-xs font-bold text-slate-900">Government Registered</div>
+                              <p className="text-[11px] text-slate-550">All frameworks match NBC (National Building Code) parameters strictly.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Dynamic Related Projects section */}
+                  {relatedProjects.length > 0 && (
+                    <div className="space-y-4 pt-6 text-left">
+                      <h3 className="text-xl font-bold font-display text-slate-900 flex items-center gap-2">
+                        <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span> 
+                        Sector Case Studies & Related Executions
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {relatedProjects.map((p) => (
+                          <div 
+                            key={p.id}
+                            onClick={() => {
+                              setActivePopupProject(p);
+                            }}
+                            className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm cursor-pointer hover:shadow-md transition-all h-64"
+                          >
+                            <img 
+                              src={p.image} 
+                              alt={p.title}
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+                            <div className="absolute inset-x-0 bottom-0 p-5 text-white text-left space-y-1">
+                              <span className="px-2 py-0.5 text-[9px] uppercase font-black bg-amber-500 text-slate-950 rounded">
+                                {p.category}
+                              </span>
+                              <h4 className="font-bold text-sm tracking-tight line-clamp-1">{p.title}</h4>
+                              <p className="text-[10px] text-slate-350 flex items-center gap-1 font-mono font-medium">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> {p.location}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })()}
+          </div>
         )}
 
         {/* ==============================================

@@ -7,11 +7,13 @@ export const INITIAL_SERVICES: Service[] = [
     description: 'End-to-end responsibility for executing medium to scale-level infrastructure and civil projects across India with premium quality standards.',
     iconName: 'Shield',
     details: 'Our general contracting service undertakes raw site development, material procurement, team mobilization, and execution oversight. We synchronize multidisciplinary sub-teams under direct Tasha leadership.',
-    features: ['Single-point accountability', 'Rigorous quality engineering', 'Strict site safety frameworks', 'Procurement efficiency & optimization']
+    features: ['Single-point accountability', 'Rigorous quality engineering', 'Strict site safety frameworks', 'Procurement efficiency & optimization'],
+    seoTitle: 'General Civil Contracting Services India | Tasha Contracts India',
+    seoDescription: 'Premium end-to-end general contracting solutions for infrastructure, structural steel, and civil constructions under a single-point accountability framework.'
   },
   {
     id: 's2',
-    name: 'Light Gauge Steel Framing (LGSF)',
+    name: 'LGSF Construction',
     description: 'Expertise in floor-to-ceiling prefabricated building solutions featuring high structural stability, rapid delivery, and eco-friendly raw materials.',
     iconName: 'Layers',
     details: 'As seen in our project records, we are premier practitioners of high-strength LGSF. Ideal for quick, sustainable layouts ranging from multi-story residential blocks to high-altitude transit shelter facilities.',
@@ -24,63 +26,114 @@ export const INITIAL_SERVICES: Service[] = [
       'Sustainable & Eco-Friendly Materials',
       'Minimal Site Wastage',
       'Long Service Life'
-    ]
+    ],
+    seoTitle: 'LGSF Construction Services | Prefabricated Steel Buildings India',
+    seoDescription: 'Leading Light Gauge Steel Framing (LGSF) construction company in India. Advanced, eco-friendly, fast, and earthquake-resistant pre-engineered structures.'
   },
   {
     id: 's3',
-    name: 'Civil Construction',
-    description: 'Heavy foundation laying, multi-story structural framing, and robust concrete works engineered to sustain generations of intense use.',
+    name: 'Industrial Facilities',
+    description: 'Heavy foundation laying, factory workshop construction, and robust structural engineering tailored for industrial production lines.',
     iconName: 'Building2',
-    details: 'We specialize in industrial structures, institutional facilities, and heavy reinforced concrete works. Powered by the finest material mixes and professional load engineers.',
-    features: ['High-resistance reinforcement concrete', 'Accurate computer-aided land surveying', 'Industrial grade retaining structures', 'Eco-compliant green material integration']
+    details: 'We build state-of-the-art power plants, cement factory bases, refinery foundations, and chemical plant structural setups. Equipped with high heat and weight resistant designs.',
+    features: [
+      'High-tolerance equipment foundations',
+      'Heavy-duty overhead crane steel gantries',
+      'Industrial flooring and concrete stabilization',
+      'Rigorous dynamic load resistance auditing'
+    ],
+    seoTitle: 'Industrial Facilities Construction Specialists | Tasha Contracts India',
+    seoDescription: 'Expert structural civil engineering for industrial facilities, power plants, manufacturing plants, and heavy pre-engineered machinery bases in India.'
   },
   {
     id: 's4',
-    name: 'Interior Fit-Out Works',
-    description: 'Chic, premium corporate and residential workspaces using high-end materials, acoustic partitioning, and luxury design layout alignments.',
-    iconName: 'LayoutGrid',
-    details: 'Turnkey interior architecture for corporate setups. We build acoustics-optimized ceilings, bespoke partitions, premium glass panelings, and custom flooring.',
-    features: ['Acoustic partition management', 'Contemporary glass & wood panelings', 'Custom light-refraction ceilings', 'Premium ergonomic desk layouts']
+    name: 'Warehouses & Logistics Parks',
+    description: 'Designing and building super-span heavy warehousing systems, advanced logistic hubs, cold storage spaces, and freight corridors.',
+    iconName: 'Store',
+    details: 'Leveraging structural pre-engineered steel frames (PEB) to achieve spans with zero column interruptions, maximizing storage density and multi-truck loading dock efficiencies.',
+    features: [
+      'Super-span columnless storage halls',
+      'Laser-screed super flat wear-resistant flooring',
+      'Automatic loading dock ramps configuration',
+      'Integrated solar roof panel frameworks'
+    ],
+    seoTitle: 'Warehouses & Logistics Parks Construction Company | Tasha Contracts',
+    seoDescription: 'Premium turnkey builders for large-scale logistics parks, heavy-duty warehouse depots, distribution centers, and cold-storage facilities in India.'
   },
   {
     id: 's5',
-    name: 'Renovation & Remodeling',
-    description: 'Upgrading existing layouts into modern premium environments utilizing smart space planning and direct architectural reinforcement.',
-    iconName: 'Wrench',
-    details: 'Structural and visual upgrades for outdated infrastructures, maximizing energy efficiencies and layouts while maintaining core load profiles completely.',
-    features: ['Complex structural renovations', 'Thermal and lighting efficiency upgrades', 'Bespoke corporate facelifts', 'Non-disruptive phase-wise works']
+    name: 'Project Management',
+    description: 'Systematic supervision, timeline scheduling, budget management, safety compliance auditing, and digital progress tracking from layout to handover.',
+    iconName: 'Briefcase',
+    details: 'Deploying modern digital Gantt systems and on-site expert engineers to bypass resource blockages, maintain budgets, and protect build schedules.',
+    features: [
+      'Real-time timeline tracking dashboards',
+      'Active cost-containment & optimization checks',
+      'Strict quality assurance & safety audits',
+      'Seamless multi-contractor synchronization'
+    ],
+    seoTitle: 'Construction Project Management Services India | Tasha Contracts',
+    seoDescription: 'Professional construction project management for civil and industrial mega-projects. Optimize timelines, control costs, and ensure absolute compliance.'
   },
   {
     id: 's6',
-    name: 'MEP Solutions & Electricals',
-    description: 'High-voltage circuitry, commercial plumbing grids, localized sub-station setups, and central heating-cooling systems.',
-    iconName: 'Zap',
-    details: 'Fully cohesive Mechanical, Electrical, and Plumbing design and maintenance services suitable for mega factories, colleges, and medical complexes.',
-    features: ['High-tension power line rigging', 'Smart HVAC distribution systems', 'Industrial drainage & water grids', 'Intelligent thermal sensor automation']
+    name: 'HR Services',
+    description: 'Contractual workforce supply, skilled and semi-skilled labor management, construction site management recruitment, and HR auditing.',
+    iconName: 'Users',
+    details: 'Powering heavy projects with skilled fitters, welders, certified safety supervisors, civil site engineers, LGSF installers, and specialized mechanics.',
+    features: [
+      'Pre-vetted certified skilled technicians',
+      'Compliant provident fund & welfare management',
+      'Rapid workforce mobilization on demand',
+      'Comprehensive on-site safety induction training'
+    ],
+    seoTitle: 'Construction HR & Manpower Workforce Solutions | Tasha Contracts',
+    seoDescription: 'Reliable HR manpower contracting services for construction projects. We deploy pre-vetted skilled labor, welders, safety in-charges, and engineers.'
   },
   {
     id: 's7',
-    name: 'Project Management & Infrastructure',
-    description: 'Systematic supervision, timeline scheduling, cost analysis, and safety-compliance auditing from drawing to final occupancy.',
-    iconName: 'Briefcase',
-    details: 'Deploying modern digital Gantt systems and on-site expert engineers to bypass resource blockages, maintain budgets, and protect build schedules.',
-    features: ['Digital telemetry and status dashboards', 'Active cost-minimization controls', 'Rigorous ISO standard compliance', 'Zero-accident hazard containment workflows']
+    name: 'Civil Construction',
+    description: 'Reinforced concrete structures, institutional buildings, corporate headquarters, and high-altitude heavy foundation works.',
+    iconName: 'Building',
+    details: 'Heavy reinforced concrete construction incorporating structural engineering. We deliver durable housing wings, commercial layouts, and corporate centers.',
+    features: [
+      'Premium grade concrete mix execution',
+      'Bespoke foundational water-proofing locks',
+      'High-grade steel bar reinforcement mesh',
+      'Full compliance with Indian Standard Codes (IS)'
+    ],
+    seoTitle: 'Civil Construction Company India | Commercial & Infrastructure Works',
+    seoDescription: 'Trusted civil construction contractors for corporate, institutional, and infrastructure projects across India using premium grade materials.'
   },
   {
     id: 's8',
-    name: 'Commercial Construction',
-    description: 'Designing and building premium retail complexes, technology corporate parks, administrative towers, and diagnostic complexes.',
-    iconName: 'Store',
-    details: 'Optimizing load frames for dynamic human traffic, premium facade designs, open atrium spaces, and secure underground double-tier parking spaces.',
-    features: ['Premium curtain-wall structural glass', 'Optimized multi-escalator vertical elevators', 'High-end structural entrance lobbies', 'Smart energy conservation frameworks']
+    name: 'Interior Fit-Out Works',
+    description: 'High-end turnkey interior layouts, luxurious corporate workspace fit-outs, acoustic partition management, and micro design alignments.',
+    iconName: 'LayoutGrid',
+    details: 'Turnkey interior architecture for corporate setups. We build acoustics-optimized ceilings, bespoke partitions, premium glass panelings, and custom flooring.',
+    features: [
+      'Acoustic soundproof partitions',
+      'Contemporary premium glass & wood panels',
+      'Custom ceiling reflection configurations',
+      'High-durability commercial flooring layout'
+    ],
+    seoTitle: 'Corporate Office Interior Fit-Out Contractors | Tasha Contracts',
+    seoDescription: 'Turnkey interior fit-out constructions for corporate offices, luxury workspaces, commercial halls, and advanced acoustic partitions.'
   },
   {
     id: 's9',
-    name: 'Residential Construction',
-    description: 'Custom premium villas, luxury gated communities, and prefabricated eco-cottages featuring smart home automation integrations.',
-    iconName: 'Home',
-    details: 'Translating individual architectural mockups into masterfully built brick, mortar, and steel living monuments. Complete space design for luxury standards.',
-    features: ['Custom luxury villa foundations', 'Integrated rainwater recycling channels', 'Bespoke rooftop terrace planning', 'Smart home fiber integration']
+    name: 'MEP Solutions & Electricals',
+    description: 'Mechanical, Electrical, and Plumbing engineering including commercial HVAC, high-voltage substations, and smart water drainage systems.',
+    iconName: 'Zap',
+    details: 'Fully cohesive Mechanical, Electrical, and Plumbing design and maintenance services suitable for mega factories, colleges, and medical complexes.',
+    features: [
+      'High-tension industrial power line setups',
+      'Energy-efficient HVAC distribution ducts',
+      'Underground civil drainage and water loops',
+      'Advanced automation safety alarm systems'
+    ],
+    seoTitle: 'Turnkey MEP & Electrical Engineering Services | Tasha Contracts',
+    seoDescription: 'Comprehensive mechanical, electrical, plumbing (MEP) integrations and high-voltage power installations for industrial facilities & commercial grids.'
   }
 ];
 
