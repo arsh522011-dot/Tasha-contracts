@@ -61,6 +61,112 @@ export default function App() {
   const [systemInfo, setSystemInfo] = useState<any>(INITIAL_SYSTEM_INFO);
   const [partners, setPartners] = useState<PartnerCompany[]>([]);
 
+  // Tab/Path mappings for professional clean URLs
+  const TAB_TO_PATH: { [key: string]: string } = {
+    home: '',
+    about: 'about-tasha',
+    services: 'our-services',
+    projects: 'completed-projects',
+    team: 'our-team',
+    contact: 'get-in-touch',
+    privacy: 'privacy-policy',
+    terms: 'terms-of-service',
+  };
+
+  const PATH_TO_TAB: { [key: string]: string } = {
+    '': 'home',
+    'corporate-home': 'home',
+    'home': 'home',
+    'about-tasha': 'about',
+    'about': 'about',
+    'our-services': 'services',
+    'services': 'services',
+    'completed-projects': 'projects',
+    'projects': 'projects',
+    'our-team': 'team',
+    'team': 'team',
+    'get-in-touch': 'contact',
+    'contact': 'contact',
+    'privacy-policy': 'privacy',
+    'privacy': 'privacy',
+    'terms-of-service': 'terms',
+    'terms': 'terms',
+  };
+
+  // Parse on initial load to support deep-linking
+  useEffect(() => {
+    let path = window.location.pathname.replace(/^\/|\/$/g, '');
+    let hash = window.location.hash.replace(/^#\/?|#$/g, '');
+    
+    const routeSegment = path || hash;
+    if (routeSegment) {
+      const parts = routeSegment.split('/');
+      const tabPath = parts[0];
+      const serviceId = parts[1] || null;
+      
+      const targetTab = PATH_TO_TAB[tabPath];
+      if (targetTab) {
+        setActiveTab(targetTab);
+        if (targetTab === 'services' && serviceId) {
+          setActiveServiceId(serviceId);
+        }
+      }
+    }
+  }, []);
+
+  // Synchronize browser Back/Forward (popstate) actions
+  useEffect(() => {
+    const handlePopState = () => {
+      let path = window.location.pathname.replace(/^\/|\/$/g, '');
+      let hash = window.location.hash.replace(/^#\/?|#$/g, '');
+      
+      const routeSegment = path || hash;
+      if (!routeSegment) {
+        setActiveTab('home');
+        setActiveServiceId(null);
+        return;
+      }
+      
+      const parts = routeSegment.split('/');
+      const tabPath = parts[0];
+      const serviceId = parts[1] || null;
+      
+      const targetTab = PATH_TO_TAB[tabPath] || 'home';
+      setActiveTab(targetTab);
+      if (targetTab === 'services') {
+        setActiveServiceId(serviceId);
+      } else {
+        setActiveServiceId(null);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Synchronize state updates back to browser URL / Address bar
+  useEffect(() => {
+    const tabPath = TAB_TO_PATH[activeTab];
+    if (tabPath === undefined) return;
+
+    let expectedPath = tabPath === '' ? '/' : `/${tabPath}`;
+    if (activeTab === 'services' && activeServiceId) {
+      expectedPath = `/our-services/${activeServiceId}`;
+    }
+
+    const currentPath = window.location.pathname;
+    const currentHash = window.location.hash;
+
+    // Check if URL matches the current tab state
+    if (currentPath !== expectedPath && currentHash !== `#${expectedPath}`) {
+      window.history.pushState(
+        { activeTab, activeServiceId },
+        '',
+        expectedPath
+      );
+    }
+  }, [activeTab, activeServiceId]);
+
   // Dynamic SEO Title and Meta Description state manager based on navigation page and sub-services
   useEffect(() => {
     let title = "Tasha Contracts India | Premium Pre-engineered LGSF & Civil Infrastructure Works";
@@ -125,8 +231,10 @@ export default function App() {
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:url', window.location.href, true);
     updateMetaTag('og:type', 'website', true);
+    updateMetaTag('og:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg', true);
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
+    updateMetaTag('twitter:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg');
   }, [activeTab, activeServiceId, services]);
 
   // Dynamic Construction Company JSON-LD Schema injection
@@ -158,8 +266,8 @@ export default function App() {
       "name": "Tasha Contracts India",
       "alternateName": "Tasha Contracts",
       "url": "https://tashacontractsindia.com/",
-      "logo": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=400",
-      "image": "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=800",
+      "logo": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
+      "image": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
       "description": "Tasha Contracts India is a premium engineering contracting company specializing in high-strength LGSF construction, prefabricated industrial facilities, warehouses, logistics parks, project management, and specialized HR services.",
       "foundingDate": "2015",
       "founder": {

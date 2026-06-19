@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Circular container providing perfect white background padding so the blue logo is incredibly visible on both light mode and dark mode web pages & Google Search results -->
+  <circle cx="256" cy="256" r="242" fill="#ffffff" stroke="#f1f5f9" stroke-width="8" />
+  
+  <g transform="translate(15, 10) scale(0.94)">
+    <!-- Rear Wing (Deep premium navy-blue accent matching your custom logo shade) -->
+    <path d="M 160,250 
+             C 145,180 115,120 75,90 
+             C 100,140 115,200 120,240 
+             C 140,220 175,200 215,185 
+             C 190,225 175,265 165,305 
+             C 195,280 235,255 275,245 
+             C 245,280 215,315 195,355 
+             Z" fill="#015280" />
+    
+    <!-- Main Soaring Wing (Vibrant sky-blue matching your Tasha brand color) -->
+    <path d="M 140,360 
+             C 160,295 210,210 260,165 
+             C 275,152 298,142 325,133 
+             C 365,120 430,105 475,60 
+             C 500,35 510,5 505,-22 
+             C 465,10 430,55 395,103 
+             C 367,140 322,183 277,205 
+             C 222,232 172,280 140,360 
+             Z" fill="#0091d5" />
+    
+    <!-- Tail & Main Body Structure -->
+    <path d="M 140,360 
+             C 152,362 165,364 177,364 
+             C 242,364 320,332 392,282 
+             C 410,270 425,254 442,242 
+             C 425,250 402,259 380,265 
+             C 330,276 272,270 232,287 
+             C 187,304 153,331 118,370 
+             Z" fill="#0091d5" />
+  </g>
+</svg>
