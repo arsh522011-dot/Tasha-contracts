@@ -823,7 +823,7 @@ export default function App() {
           {/* Desktop Nav Items */}
           <nav className="hidden xl:flex items-center gap-1.5">
             {[
-              { id: 'home', label: 'Corporate Home' },
+              { id: 'home', label: 'Home' },
               { id: 'about', label: 'About Tasha' },
               { id: 'services', label: 'Our Services' },
               { id: 'projects', label: 'Completed & Ongoing' },
@@ -882,7 +882,7 @@ export default function App() {
         }`}>
           <div className="flex flex-col gap-3 font-display">
             {[
-              { id: 'home', label: 'Corporate Home' },
+              { id: 'home', label: 'Home' },
               { id: 'about', label: 'About Tasha' },
               { id: 'services', label: 'Our Services' },
               { id: 'projects', label: 'Completed & Ongoing' },
@@ -3128,7 +3128,7 @@ export default function App() {
           <div className="space-y-4">
             <h4 className={`font-bold uppercase tracking-wider ${isDark ? 'text-white' : 'text-slate-900 text-sm'}`}>Quick Navigation</h4>
             <ul className="space-y-1.5 uppercase tracking-wide text-[11px] font-bold">
-              <li><button onClick={() => setActiveTab('home')} className="hover:text-amber-600">Corporate Home</button></li>
+              <li><button onClick={() => setActiveTab('home')} className="hover:text-amber-600">Home</button></li>
               <li><button onClick={() => setActiveTab('about')} className="hover:text-amber-600">About Tasha</button></li>
               <li><button onClick={() => setActiveTab('services')} className="hover:text-amber-600">Service Catalogs</button></li>
               <li><button onClick={() => setActiveTab('projects')} className="hover:text-amber-600">Built Gallery</button></li>
