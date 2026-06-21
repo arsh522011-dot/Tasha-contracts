@@ -169,13 +169,13 @@ export default function App() {
 
   // Dynamic SEO Title and Meta Description state manager based on navigation page and sub-services
   useEffect(() => {
-    let title = "Tasha Contracts India | Premium Pre-engineered LGSF & Civil Infrastructure Works";
-    let description = "Tasha Contracts India is a leading service provider specializing in prefabricated LGSF industrial sheds, pre-engineered buildings, portable cabins, and robust civil construction corporate offices across Uttar Pradesh & India.";
-    let keywords = "Tasha Contracts, Tasha Contracts India, LGSF, Prefabricated Industrial Sheds, Pre-engineered Buildings, Portable Cabins, Civil Construction, Amroha, Uttar Pradesh";
+    let title = "Tasha Contracts India | Construction, Civil, Interior & Turnkey Project Solutions";
+    let description = "Tasha Contracts India provides construction, civil engineering, interior fit-out, renovation, industrial, commercial and turnkey project solutions across India with quality execution and timely delivery.";
+    let keywords = "Construction Company India, Civil Construction Contractor, Turnkey Construction Services, Building Construction Company, Industrial Construction Contractor, Commercial Construction Services, Residential Construction Services, Infrastructure Development Company, Civil Engineering Services, General Contractor India, Project Management Services, Construction Project Execution, EPC Contractor India, Design and Build Contractor, Construction Solutions Provider, Factory Construction Contractor, Warehouse Construction Company, Industrial Shed Construction, Steel Structure Construction, PEB Building Contractor, Manufacturing Plant Construction, Commercial Building Contractor, Office Building Construction, Hospital Construction Company, School Construction Contractor, Interior Fit Out Contractor, Commercial Interior Contractor, Office Interior Design and Build, Building Renovation Services, Structural Repair Contractor, Turnkey Interior Solutions, Retail Store Interior Contractor, Government Contractor India, CPWD Contractor, PWD Contractor, Infrastructure Contractor, Public Sector Construction Projects, Government Civil Work Contractor, Road Construction Contractor, Bridge Construction Company, Hire Construction Contractor, Best Construction Company, Turnkey Construction Company, Commercial Building Contractor Near Me, Industrial Construction Contractor, Civil Contractor for Factory Construction, Building Construction Services, Construction Project Management Company, Construction Company in Amroha, Civil Contractor in Hasanpur, Building Contractor in Amroha, Construction Services in Uttar Pradesh, Industrial Construction Company in Uttar Pradesh, Commercial Construction Contractor in Amroha, Turnkey Project Contractor in Hasanpur, Tasha Contracts India, Tasha Contracts, LGSF, Prefabricated Industrial Sheds, Pre-engineered Buildings, Portable Cabins, Civil Construction, Amroha, Uttar Pradesh";
 
     if (activeTab === 'home') {
-      title = "Tasha Contracts India | Premium Pre-engineered LGSF & Civil Infrastructure Works";
-      description = "Pioneering sustainable, heavy-load structural Light Gauge Steel Framing (LGSF) and high-quality civil contracting services across India since 2015.";
+      title = "Tasha Contracts India | Construction, Civil, Interior & Turnkey Project Solutions";
+      description = "Tasha Contracts India provides construction, civil engineering, interior fit-out, renovation, industrial, commercial and turnkey project solutions across India with quality execution and timely delivery.";
     } else if (activeTab === 'about') {
       title = "About Us & Quality Assurance | Tasha Contracts India ";
       description = "Learn about Tasha Contracts India, founded in 2015 by Mr. Jackson. Read our mission, high compliance engineering standards, and vision for LGSF & civil construction.";
@@ -256,46 +256,120 @@ export default function App() {
         "@type": "Service",
         "name": s.name,
         "description": s.description,
-        "url": `https://tashacontractsindia.com/?service=${s.id}`
+        "url": `https://tashacontractsindia.com/our-services/${s.id}`
       }
     }));
 
     const schemaData = {
       "@context": "https://schema.org",
-      "@type": "ConstructionBusiness",
-      "name": "Tasha Contracts India",
-      "alternateName": "Tasha Contracts",
-      "url": "https://tashacontractsindia.com/",
-      "logo": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
-      "image": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
-      "description": "Tasha Contracts India is a premium engineering contracting company specializing in high-strength LGSF construction, prefabricated industrial facilities, warehouses, logistics parks, project management, and specialized HR services.",
-      "foundingDate": "2015",
-      "founder": {
-        "@type": "Person",
-        "name": "Mr. Jackson",
-        "jobTitle": "Founder & Managing Director"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Ujhari",
-        "addressRegion": "Uttar Pradesh",
-        "addressCountry": "IN"
-      },
-      "areaServed": "IN",
-      "knowsAbout": [
-        "Light Gauge Steel Framing (LGSF)",
-        "LGSF Construction",
-        "Industrial Facilities Construction",
-        "Warehouse Building",
-        "Logistics Park Engineering",
-        "Construction Project Management",
-        "Workforce & HR Service Solutions"
-      ],
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "General & Pre-engineered Construction Services",
-        "itemListElement": servicesCatalog
-      }
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://tashacontractsindia.com/#organization",
+          "name": "Tasha Contracts India",
+          "alternateName": "Tasha Contracts",
+          "url": "https://tashacontractsindia.com/",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
+            "caption": "Tasha Contracts India Logo"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+91-94119-55562",
+            "contactType": "customer service",
+            "areaServed": "IN",
+            "availableLanguage": ["en", "hi"]
+          }
+        },
+        {
+          "@type": "ConstructionBusiness",
+          "@id": "https://tashacontractsindia.com/#localbusiness",
+          "name": "Tasha Contracts India",
+          "image": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg",
+          "telephone": "+91-94119-55562",
+          "email": "tashacontracts@gmail.com",
+          "priceRange": "$$$",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Ground Floor Shop, Dhakka Amroha",
+            "addressLocality": "Amroha",
+            "addressRegion": "Uttar Pradesh",
+            "postalCode": "244221",
+            "addressCountry": "IN"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "28.9103",
+            "longitude": "78.4716"
+          },
+          "url": "https://tashacontractsindia.com/",
+          "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ],
+            "opens": "09:00",
+            "closes": "18:30"
+          },
+          "founder": {
+            "@type": "Person",
+            "name": "Mr. Jackson",
+            "jobTitle": "Founder & Managing Director"
+          },
+          "knowsAbout": [
+            "Light Gauge Steel Framing (LGSF)",
+            "LGSF Construction",
+            "Industrial Facilities Construction",
+            "Warehouse Building",
+            "Logistics Park Engineering",
+            "Construction Project Management",
+            "Workforce & HR Service Solutions",
+            "Civil Construction",
+            "Office Interior Fit-out & Renovation Works"
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "General & Pre-engineered Construction Services",
+            "itemListElement": servicesCatalog
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://tashacontractsindia.com/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Why choose Tasha Contracts for Turnkey Construction in India?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Tasha Contracts India provides premium end-to-end turnkey construction services. We combine advanced Light Gauge Steel Framing (LGSF) technology, experienced civil engineers, transparent project management, and government approved safety standards to deliver projects up to 70% faster with maximum cost-efficiency."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is Tasha Contracts a registered Government Contractor?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, Tasha Contracts India is a certified government contractor executing CPWD, PWD, and Public Sector civil construction projects under severe engineering compliance, structural safety regulations, and rigid ISO audit scopes."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What locations do you serve for commercial & industrial projects?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our primary corporate office is located in Dhakka Amroha, Uttar Pradesh, and we operate active regional workshops in Hasanpur, Sambhal, and Noida. However, we deliver large-scale prefabricated steel factory systems, pre-engineered warehouses, and structural engineering works PAN India."
+              }
+            }
+          ]
+        }
+      ]
     };
 
     script.textContent = JSON.stringify(schemaData, null, 2);
@@ -1617,6 +1691,113 @@ export default function App() {
               ) : (
                 <p className="text-xs text-slate-500 italic py-4">No companion corporations cataloged.</p>
               )}
+            </motion.section>
+
+            {/* COMPREHENSIVE SPECIALTY SOLUTIONS SECTION WITH STRATEGIC H2 HEADINGS */}
+            <motion.section 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+              className="space-y-10 text-left"
+            >
+              <div className="space-y-2 border-b border-amber-500/15 pb-4">
+                <span className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.25em] block">
+                  TASHA CORE CAPABILITIES
+                </span>
+                <h2 className={`text-2xl md:text-3.5xl font-black font-display tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                  Primary Construction &amp; Turnkey Project Solutions
+                </h2>
+                <p className={`text-xs md:text-sm font-sans max-w-3xl ${isDark ? 'text-gray-400 font-light' : 'text-slate-600 font-normal'}`}>
+                  Serving Amroha, Hasanpur, Uttar Pradesh, and PAN India with advanced structural pre-engineered layouts and robust civil works.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* 1. Commercial Construction Services */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-[#0f172a]/40 border-slate-750/50' : 'bg-white border-slate-200 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Commercial Construction Services
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                    We engineer premium commercial building spaces, office complexes, shopping hubs, educational schools, and hospital buildings. From heavy foundation laying to custom partition facades.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-slate-500 flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
+                    <span>#CommercialBuildingContractor</span>
+                    <span>#OfficeBuildingConstruction</span>
+                  </div>
+                </div>
+
+                {/* 2. Industrial Construction Solutions */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-[#0f172a]/40 border-slate-750/50' : 'bg-white border-slate-200 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Industrial Construction Solutions
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                    Pre-engineered PEB structures, manufacturing factories, warehouses, logistics parks, and high-strength industrial shed structures. Specialized in heavy structural steel and seismic-safe prefabrications.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-slate-500 flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
+                    <span>#FactoryConstructionContractor</span>
+                    <span>#PEBBuildingContractor</span>
+                  </div>
+                </div>
+
+                {/* 3. Civil Engineering & Infrastructure Development */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-[#0f172a]/40 border-slate-750/50' : 'bg-white border-slate-200 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Civil Engineering &amp; Infrastructure Development
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-650'}`}>
+                    Heavy public sector foundations, CPWD/PWD government civil works, road network layouts, bridge building, thermal power plant setups, and deep-soil structural reinforcements.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-slate-500 flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
+                    <span>#InfrastructureContractor</span>
+                    <span>#GovernmentCivilWork</span>
+                  </div>
+                </div>
+
+                {/* 4. Interior Fit-Out & Renovation Services */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-[#0f172a]/40 border-slate-750/50' : 'bg-white border-slate-200 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Interior Fit-Out &amp; Renovation Services
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-655'}`}>
+                    Premium interior designer configurations, fit-outs for workspace layouts, corporate aesthetics, acoustic division boards, and turnkey business refurbishments or remodeling operations.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-slate-500 flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
+                    <span>#InteriorFitOutContractor</span>
+                    <span>#BuildingRenovationServices</span>
+                  </div>
+                </div>
+
+                {/* 5. Turnkey Project Management */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-[#0f172a]/40 border-slate-750/50' : 'bg-white border-slate-200 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Turnkey Project Management
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-400' : 'text-slate-655'}`}>
+                    Complete design-and-build EPC solutions, timeline scheduling (digital Gantt models), class-A safety audits, resource optimization, and seamless multi-crew dynamic coordination.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-slate-500 flex flex-wrap gap-2 pt-1 border-t border-slate-100 dark:border-slate-800/60 font-mono">
+                    <span>#TurnkeyConstructionServices</span>
+                    <span>#ProjectManagementCompany</span>
+                  </div>
+                </div>
+
+                {/* 6. Local & Regional Uttar Pradesh Presence */}
+                <div className={`p-6 rounded-2xl border ${isDark ? 'bg-amber-500/10 border-amber-500/30' : 'bg-amber-500/5 border-amber-500/20 shadow-sm'} space-y-3`}>
+                  <h3 className={`text-lg font-black font-display text-amber-500`}>
+                    Local Engineering Presence
+                  </h3>
+                  <p className={`text-xs leading-relaxed ${isDark ? 'text-gray-300' : 'text-slate-700'}`}>
+                    Highly-rated construction contractor in Amroha, Hasanpur, Sambhal, and wider Uttar Pradesh. Fully equipped with on-site equipment, regional sand-reinforcements, and deep CPWD/PWD compliance credentials.
+                  </p>
+                  <div className="text-[10.5px] font-semibold text-amber-600 flex flex-wrap gap-2 pt-1 border-t border-amber-500/20 font-mono">
+                    <span>#ConstructionCompanyInAmroha</span>
+                    <span>#CivilContractorInHasanpur</span>
+                  </div>
+                </div>
+              </div>
             </motion.section>
 
             {/* PLANNING A CONSTRUCTION PROJECT? Full-width Sunset/Steel framework banner CTA */}
