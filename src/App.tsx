@@ -74,25 +74,26 @@ export default function App() {
   };
 
   const PATH_TO_TAB: { [key: string]: string } = {
-    '': 'home',
-    'corporate-home': 'home',
-    'home': 'home',
-    'about-tasha': 'about',
-    'about': 'about',
-    'our-services': 'services',
-    'services': 'services',
-    'completed-projects': 'projects',
-    'projects': 'projects',
-    'our-team': 'team',
-    'team': 'team',
-    'get-in-touch': 'contact',
-    'contact': 'contact',
-    'privacy-policy': 'privacy',
-    'privacy': 'privacy',
-    'terms-of-service': 'terms',
-    'terms': 'terms',
-  };
+  '': 'home',
+  'corporate-home': 'home',
+  'home': 'home',
+  'about-tasha': 'about',
+  'about': 'about',
+  'our-services': 'services',
+  'services': 'services',
+  'completed-projects': 'projects',
+  'projects': 'projects',
+  'our-team': 'team',
+  'team': 'team',
+  'get-in-touch': 'contact',
+  'contact': 'contact',
+  'privacy-policy': 'privacy',
+  'privacy': 'privacy',
+  'terms-of-service': 'terms',
+  'terms': 'terms',
 
+  'civil-construction': 'services',
+};
   // Parse on initial load to support deep-linking
   useEffect(() => {
     let path = window.location.pathname.replace(/^\/|\/$/g, '');
