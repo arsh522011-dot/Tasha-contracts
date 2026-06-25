@@ -132,8 +132,16 @@ export default function App() {
       const tabPath = parts[0];
       const serviceId = parts[1] || null;
       
-      const targetTab = PATH_TO_TAB[tabPath] || 'home';
-      setActiveTab(targetTab);
+     let targetTab = PATH_TO_TAB[tabPath];
+
+if (tabPath === 'civil-construction') {
+  targetTab = 'services';
+  setActiveServiceId('civil-construction');
+} else {
+  if (targetTab === undefined) targetTab = 'home';
+}
+
+setActiveTab(targetTab);
       if (targetTab === 'services') {
         setActiveServiceId(serviceId);
       } else {
