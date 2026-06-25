@@ -904,6 +904,7 @@ export default function App() {
               { id: 'projects', label: 'Completed & Ongoing' },
               { id: 'team', label: 'Our Team' },
               { id: 'contact', label: 'Get in Touch' }
+      { id: 'civil-construction', label: 'Civil Construction' }
             ].map((tab) => (
               <motion.button
                 whileHover={{ scale: 1.05 }}
