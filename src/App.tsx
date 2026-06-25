@@ -1049,7 +1049,7 @@ export default function App() {
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 text-[10px] font-extrabold uppercase tracking-widest"
                 >
                   <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-ping"></span>
-                  Pioneering Prefabricated Systems (Since 2015)
+                  Modern Construction & Prefabrication Experts (Since 2015)
                 </motion.div>
 
                 <motion.h1 
@@ -2160,7 +2160,7 @@ export default function App() {
                   word.length > 3 && (p.title.toLowerCase().includes(word) || p.description.toLowerCase().includes(word))
                 );
                 if (hasMatchingWord) return true;
-                if (service.name.toLowerCase().includes('lgsf') && (p.category === 'LGSF / Prefabricated')) return true;
+                if (service.name.toLowerCase().includes('lgsf') && (p.category === 'Steel & Prefabricated Construction')) return true;
                 if (service.name.toLowerCase().includes('industrial') && (p.category === 'Civil Construction' || p.title.toLowerCase().includes('thermal') || p.title.toLowerCase().includes('power') || p.title.toLowerCase().includes('plant'))) return true;
                 if (p.category.toLowerCase().split(' ')[0] === service.name.toLowerCase().split(' ')[0]) return true;
                 return false;
