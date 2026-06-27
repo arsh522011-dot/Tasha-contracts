@@ -231,10 +231,10 @@ export default function App() {
     updateMetaTag('og:description', description, true);
     updateMetaTag('og:url', window.location.href, true);
     updateMetaTag('og:type', 'website', true);
-    updateMetaTag('og:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg', true);
+    updateMetaTag('og:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1782569510/android-chrome-512x512_x9tzdr.png', true);
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781458097/lwqggnzmuj3oaa18noat.jpg');
+    updateMetaTag('twitter:image', 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1782569510/android-chrome-512x512_x9tzdr.png');
   }, [activeTab, activeServiceId, services]);
 
   // Dynamic Construction Company JSON-LD Schema injection
