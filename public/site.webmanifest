@@ -3,12 +3,12 @@
   "short_name": "Tasha Contracts",
   "icons": [
     {
-      "src": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1782569510/android-chrome-192x192_dg8rhc.png",
+      "src": "/android-chrome-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://res.cloudinary.com/dpxoxrnrd/image/upload/v1782569510/android-chrome-512x512_x9tzdr.png",
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
