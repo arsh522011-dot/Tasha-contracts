@@ -144,25 +144,25 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Synchronize state updates back to browser URL / Address bar
+  // Synchronize state updates back to browser URL / Address bar using safe Hash-Based Routing (avoids 404 on refresh)
   useEffect(() => {
     const tabPath = TAB_TO_PATH[activeTab];
     if (tabPath === undefined) return;
 
-    let expectedPath = tabPath === '' ? '/' : `/${tabPath}`;
+    let expectedHash = tabPath === '' ? '' : `#${tabPath}`;
     if (activeTab === 'services' && activeServiceId) {
-      expectedPath = `/our-services/${activeServiceId}`;
+      expectedHash = `#our-services/${activeServiceId}`;
     }
 
-    const currentPath = window.location.pathname;
     const currentHash = window.location.hash;
 
-    // Check if URL matches the current tab state
-    if (currentPath !== expectedPath && currentHash !== `#${expectedPath}`) {
+    // Ensure the pathname is always "/" or the base directory of the app
+    // to avoid 404 errors on browser page reloads.
+    if (currentHash !== expectedHash) {
       window.history.pushState(
         { activeTab, activeServiceId },
         '',
-        expectedPath
+        expectedHash || '/'
       );
     }
   }, [activeTab, activeServiceId]);
