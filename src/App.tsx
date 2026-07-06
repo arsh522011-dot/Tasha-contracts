@@ -49,9 +49,7 @@ export default function App() {
 
   // Core synchronized application state
   const [projects, setProjects] = useState<Project[]>([]);
-  const [services, setServices] = useState<Service[]>(INITIAL_SERVICES);
-  const [servicesLoading, setServicesLoading] = useState<boolean>(true);
-  const [servicesError, setServicesError] = useState<boolean>(false);
+  const [services, setServices] = useState<Service[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
   const [industries, setIndustries] = useState<Industry[]>([]);
@@ -480,8 +478,6 @@ export default function App() {
             return s;
           });
           setServices(syncedServices);
-          setServicesLoading(false);
-          setServicesError(false);
           setTestimonials(liveTestimonials);
           setTeam(liveTeam);
           setIndustries(liveIndustries);
@@ -519,8 +515,6 @@ export default function App() {
           return s;
         });
         setServices(syncedLocalServices);
-        setServicesLoading(false);
-        setServicesError(true);
 
         const savedTestimonials = localStorage.getItem('tasha_testimonials');
         setTestimonials(savedTestimonials ? JSON.parse(savedTestimonials) : INITIAL_TESTIMONIALS);
@@ -564,8 +558,6 @@ export default function App() {
         console.warn('LocalStorage error, keeping preloaded defaults', e);
         setProjects(INITIAL_PROJECTS);
         setServices(INITIAL_SERVICES);
-        setServicesLoading(false);
-        setServicesError(true);
         setTestimonials(INITIAL_TESTIMONIALS);
         setTeam(INITIAL_TEAM);
         setIndustries(INITIAL_INDUSTRIES);
@@ -1118,100 +1110,89 @@ export default function App() {
             </motion.section>
 
             {/* OUR SERVICES - Beautiful Glassmorphic Deep Blue Grid (MM Builders theme) */}
-            <section className="space-y-8 pt-4" id="our-services-section">
+            <motion.section 
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                visible: { transition: { staggerChildren: 0.1 } },
+                hidden: {}
+              }}
+              className="space-y-8 pt-4"
+            >
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div className="space-y-2 text-left">
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+                  }}
+                  className="space-y-2 text-left"
+                >
                   <span className="text-[10px] font-extrabold uppercase text-amber-500 tracking-[0.2em] block">
                     INDUSTRIAL SPECIALTY
                   </span>
                   <h2 className={`text-3xl font-black font-display tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     Our Services
                   </h2>
-                </div>
-                <button
+                </motion.div>
+                <motion.button
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, x: 0, transition: { duration: 0.6 } }
+                  }}
                   onClick={() => setActiveTab('services')}
                   className="text-xs font-black uppercase tracking-widest text-amber-500 hover:underline flex items-center gap-1.5 self-start cursor-pointer md:self-end"
                 >
                   Explore All Capabilities <ChevronRight size={14} />
-                </button>
+                </motion.button>
               </div>
 
-              {/* Dynamic Error Fallback Alert (Friendly non-blocking message) */}
-              {servicesError && (
-                <div className={`p-4 rounded-xl border text-xs text-left flex items-center gap-3 ${
-                  isDark ? 'bg-slate-900/60 border-amber-500/25 text-amber-400/90' : 'bg-amber-50 border-amber-200 text-amber-800'
-                }`}>
-                  <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
-                  <p>
-                    <strong>Offline Mode:</strong> We experienced a minor latency loading our live database. Showing our standard pre-cached services catalog for uninterrupted access.
-                  </p>
-                </div>
-              )}
-
-              {/* Service Cards Grid / Skeleton */}
-              {servicesLoading && (!services || services.length === 0) ? (
-                /* Beautiful Skeleton Loader if dynamic data is completely empty and loading */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[1, 2, 3, 4, 5, 6].map((idx) => (
-                    <div 
-                      key={idx}
-                      className={`p-6 md:p-8 rounded-xl border animate-pulse flex flex-col justify-between h-[240px] ${
-                        isDark ? 'bg-slate-800/35 border-slate-700/50' : 'bg-slate-50 border-slate-200'
-                      }`}
-                    >
-                      <div className="space-y-4">
-                        <div className="w-12 h-12 rounded-lg bg-slate-700/40 dark:bg-slate-800" />
-                        <div className="h-5 w-2/3 rounded bg-slate-700/40 dark:bg-slate-800" />
-                        <div className="h-3 w-full rounded bg-slate-700/40 dark:bg-slate-800" />
-                        <div className="h-3 w-5/6 rounded bg-slate-700/40 dark:bg-slate-800" />
-                      </div>
-                      <div className="h-3 w-1/3 rounded bg-slate-700/40 dark:bg-slate-800" />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                /* Real cards (Always visible immediately because state starts with INITIAL_SERVICES) */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(services && services.length > 0 ? services : INITIAL_SERVICES).slice(0, 6).map((service, i) => (
-                    <div 
-                      key={service.id || `home-service-${i}`}
-                      className={`p-6 md:p-8 rounded-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col justify-between group cursor-pointer shadow-xl border ${
-                        isDark 
-                          ? 'bg-[#141E30] border-slate-800/65 hover:border-amber-500/35 hover:bg-[#19253C]' 
-                          : 'bg-white border-slate-200/80 hover:border-amber-500/40 hover:shadow-lg'
-                      }`}
-                      onClick={() => setActiveTab('services')}
-                    >
-                      <div className="space-y-4">
-                        {/* White simple icon top of card */}
-                        <div className={`w-12 h-12 flex items-center justify-center bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 ${
-                          isDark ? 'text-white' : 'text-amber-600'
-                        }`}>
-                          <DynamicIcon name={service.iconName} size={22} />
-                        </div>
-                        <h3 className={`text-lg font-bold font-display group-hover:text-amber-500 transition-colors ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}>
-                          {service.name}
-                        </h3>
-                        <p className={`text-xs leading-relaxed font-sans line-clamp-2 ${
-                          isDark ? 'text-slate-300' : 'text-slate-600'
-                        }`}>
-                          {service.description}
-                        </p>
-                      </div>
-
-                      <div className={`pt-4 mt-6 border-t flex items-center justify-between text-[11px] font-medium ${
-                        isDark ? 'border-slate-800/60 text-slate-400' : 'border-slate-100 text-slate-500'
+              {/* Service Cards Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {services.slice(0, 6).map((service, i) => (
+                  <motion.div 
+                    key={service.id || i}
+                    variants={{
+                      hidden: { opacity: 0, y: 30 },
+                      visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                    }}
+                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    className={`p-6 md:p-8 rounded-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer shadow-xl border ${
+                      isDark 
+                        ? 'bg-[#141E30] border-slate-800/65 hover:border-amber-500/35 hover:bg-[#19253C]' 
+                        : 'bg-white border-slate-200/80 hover:border-amber-500/40 hover:shadow-lg'
+                    }`}
+                    onClick={() => setActiveTab('services')}
+                  >
+                    <div className="space-y-4">
+                      {/* White simple icon top of card */}
+                      <div className={`w-12 h-12 flex items-center justify-center bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 ${
+                        isDark ? 'text-white' : 'text-amber-600'
                       }`}>
-                        <span>{service.features ? service.features[0] : 'High Quality Execution'}</span>
-                        <span className="text-amber-500 font-extrabold group-hover:translate-x-1 transition-transform">→</span>
+                        <DynamicIcon name={service.iconName} size={22} />
                       </div>
+                      <h3 className={`text-lg font-bold font-display group-hover:text-amber-500 transition-colors ${
+                        isDark ? 'text-white' : 'text-slate-900'
+                      }`}>
+                        {service.name}
+                      </h3>
+                      <p className={`text-xs leading-relaxed font-sans line-clamp-2 ${
+                        isDark ? 'text-slate-300' : 'text-slate-600'
+                      }`}>
+                        {service.description}
+                      </p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </section>
+
+                    <div className={`pt-4 mt-6 border-t flex items-center justify-between text-[11px] font-medium ${
+                      isDark ? 'border-slate-800/60 text-slate-400' : 'border-slate-100 text-slate-500'
+                    }`}>
+                      <span>{service.features ? service.features[0] : 'High Quality Execution'}</span>
+                      <span className="text-amber-500 font-extrabold group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.section>
 
             {/* WHY CHOOSE US - High-Contrast Pristine Light-Slate Segment (Alternating Look) */}
             <motion.section 
@@ -2093,7 +2074,7 @@ export default function App() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-                  {(services && services.length > 0 ? services : INITIAL_SERVICES).map((service) => (
+                  {services.map((service) => (
                     <div 
                       key={service.id} 
                       onClick={() => setActiveServiceId(service.id)}
