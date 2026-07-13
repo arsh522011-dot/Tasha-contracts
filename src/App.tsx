@@ -5,7 +5,7 @@ import {
   CheckCircle2, ArrowRight, ShieldCheck, Download, Award, Shield,
   Users, HelpCircle, Layers, Calendar, ChevronRight, Search, Filter,
   PhoneCall, Star, Quote, Eye, ArrowUpRight, Check, Sparkles, Sun, Moon, Menu, X,
-  Lock, Scale, Video, ArrowLeft
+  Lock, Scale, Video, ArrowLeft, WifiOff, AlertCircle, RefreshCw
 } from 'lucide-react';
 
 import { Project, Service, Testimonial, TeamMember, Certificate, CareerListing, QuoteRequest, ContactMessage, CareerApplication, Industry, PartnerCompany } from './types';
@@ -43,7 +43,6 @@ export default function App() {
   const [themeMode, setThemeMode] = useState<'dark' | 'light'>('light');
 
   // Multi-page navigation state
-  const [showSplash, setShowSplash] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('home');
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -488,19 +487,46 @@ export default function App() {
   });
   const [contactStatus, setContactStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  // Loading, retry and error state management for initial-load data reliability
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [loadingError, setLoadingError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState<number>(0);
+  const [minLoadingPassed, setMinLoadingPassed] = useState<boolean>(false);
+
+  // Enforce a minimum display time for the splash screen to avoid visual flicker
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setMinLoadingPassed(true);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [retryCount]);
+
   // Sync state from Database (with LocalStorage fallback) on mount
   useEffect(() => {
+    let isMounted = true;
+    
     async function initializeApplicationData() {
-      // Removed theme loading to enforce dark mode
-
-      // Check live Firestore connection
-      try {
-        console.log("Checking Live Firestore cloud connection...");
-        const isConnected = await testConnection();
-        if (isConnected) {
+      setIsLoading(true);
+      setLoadingError(null);
+      
+      const maxRetries = 3;
+      let attempt = 0;
+      let success = false;
+      
+      while (attempt < maxRetries && !success && isMounted) {
+        try {
+          console.log(`Loading application data (Attempt ${attempt + 1}/${maxRetries})...`);
+          
+          // Check live Firestore connection with a small but safe timeout
+          const isConnected = await testConnection();
+          if (!isConnected) {
+            throw new Error("Unable to establish connection to Firebase Firestore servers.");
+          }
+          
+          if (!isMounted) return;
           setDbMode('firebase');
           
-          // Use localStorage data as the seeding fallback defaults to retain user modifications
+          // Seed values fallback to prevent missing documents
           const savedProjectsStr = localStorage.getItem('tasha_projects');
           const seedProjects = savedProjectsStr ? JSON.parse(savedProjectsStr) : INITIAL_PROJECTS;
 
@@ -537,6 +563,7 @@ export default function App() {
           const savedPartnersStr = localStorage.getItem('tasha_partners');
           const seedPartners = savedPartnersStr ? JSON.parse(savedPartnersStr) : INITIAL_PARTNERS;
           
+          // Fetch all collections in parallel from Firestore
           const [
             liveProjects,
             liveServices,
@@ -565,7 +592,10 @@ export default function App() {
             fetchCollectionFromFirestore<PartnerCompany>('partners', seedPartners)
           ]);
 
+          if (!isMounted) return;
+
           setProjects(liveProjects);
+          
           // Auto-sync LGSF features to the newly specified 8 guarantees
           const syncedServices = liveServices.map(s => {
             if (s.id === 's2' && (s.features.length === 4 || s.features.includes('Seismic and wind resistant steel frames'))) {
@@ -608,13 +638,24 @@ export default function App() {
           } catch (e) {
             console.warn("Failed to write live Firestore sync data to LocalStorage cache", e);
           }
+
+          success = true;
+          setIsLoading(false);
+          console.log("Firebase Firestore data loaded successfully on initial visit!");
           return;
+        } catch (err) {
+          console.warn(`Attempt ${attempt + 1} failed:`, err);
+          attempt++;
+          if (attempt < maxRetries && isMounted) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+          }
         }
-      } catch (err) {
-        console.warn("Firestore collection load failed; switching to localStorage load.", err);
       }
 
+      if (!isMounted) return;
+
       // Fallback local storage state load if credentials/offline block
+      console.warn("Firebase loading failed after all retries. Falling back to local storage offline mode.");
       setDbMode('local');
       try {
         const savedProjects = localStorage.getItem('tasha_projects');
@@ -668,8 +709,11 @@ export default function App() {
         } else {
           setSystemInfo(INITIAL_SYSTEM_INFO);
         }
+        
+        // If we have any cached data at all, we can proceed
+        setIsLoading(false);
       } catch (e) {
-        console.warn('LocalStorage error, keeping preloaded defaults', e);
+        console.warn('LocalStorage error during fallback, using fresh defaults', e);
         setProjects(INITIAL_PROJECTS);
         setServices(INITIAL_SERVICES);
         setTestimonials(INITIAL_TESTIMONIALS);
@@ -679,11 +723,17 @@ export default function App() {
         setCareers(INITIAL_CAREERS);
         setPartners(INITIAL_PARTNERS);
         setSystemInfo(INITIAL_SYSTEM_INFO);
+        
+        setLoadingError("Unable to load latest cloud data. Please check your internet connection.");
       }
     }
 
     initializeApplicationData();
-  }, []);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [retryCount]);
 
   // Hidden key shortcut to access admin panel securely without public footer link
   useEffect(() => {
@@ -932,33 +982,81 @@ export default function App() {
     return matchesCat && matchesSearch;
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2500);
-    return () => clearTimeout(timer);
-  }, []);
-
   const uniqueCategories = ['All', 'LGSF / Prefabricated', 'Civil Construction', 'Commercial', 'Residential', 'Interior Fit-Out'];
   const isDark = themeMode === 'dark';
 
-  if (showSplash) {
+  if (isLoading || !minLoadingPassed || loadingError) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5 }}
-        className={`min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ${isDark ? 'bg-white' : 'bg-white'} z-[9999]`}
+        className={`min-h-screen flex flex-col items-center justify-center p-6 transition-colors duration-300 ${isDark ? 'bg-slate-950 text-white' : 'bg-slate-50 text-slate-800'} z-[9999]`}
       >
-        <motion.img 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          src={optimizeImage("https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781470506/xi5glrd0y0orfruy70hm.png", 500)}
-          alt="Tasha Contracts India"
-          className="max-w-[90%] md:max-w-[500px] h-auto object-contain select-none pb-4"
-        />
+        <div className="max-w-md w-full flex flex-col items-center text-center">
+          <motion.img 
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            src={optimizeImage("https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781470506/xi5glrd0y0orfruy70hm.png", 500)}
+            alt="Tasha Contracts India"
+            className="max-w-[280px] md:max-w-[360px] h-auto object-contain select-none mb-6"
+          />
+          
+          {loadingError ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl w-full flex flex-col items-center gap-4"
+            >
+              <div className="p-3 bg-rose-50 text-rose-500 rounded-full">
+                <WifiOff className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Synchronisation Failed</h3>
+              <p className="text-sm text-slate-500">
+                {loadingError}
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+                <button
+                  onClick={() => {
+                    setLoadingError(null);
+                    setRetryCount(prev => prev + 1);
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium text-sm rounded-xl transition shadow-md shadow-slate-950/10 cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Retry Connection
+                </button>
+                <button
+                  onClick={() => {
+                    setLoadingError(null);
+                    setIsLoading(false);
+                    setMinLoadingPassed(true);
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-medium text-sm rounded-xl transition cursor-pointer"
+                >
+                  Load Offline Backup
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="flex flex-col items-center gap-4 mt-4">
+              {/* Sleek Minimalist Ring Loader */}
+              <div className="relative w-12 h-12">
+                <div className="absolute inset-0 rounded-full border-4 border-slate-200/50"></div>
+                <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+              </div>
+              <p className="text-sm font-semibold text-slate-600 tracking-wider uppercase animate-pulse">
+                Securing Cloud Database...
+              </p>
+              <span className="text-xs text-slate-400">
+                Fetching latest architectural portfolios & profiles on first load
+              </span>
+            </div>
+          )}
+        </div>
       </motion.div>
     );
   }
