@@ -48,19 +48,114 @@ export default function App() {
   const [activeServiceId, setActiveServiceId] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-  // Core synchronized application state
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-  const [team, setTeam] = useState<TeamMember[]>([]);
-  const [industries, setIndustries] = useState<Industry[]>([]);
-  const [certificates, setCertificates] = useState<Certificate[]>([]);
-  const [careers, setCareers] = useState<CareerListing[]>([]);
-  const [quotes, setQuotes] = useState<QuoteRequest[]>([]);
-  const [contacts, setContacts] = useState<ContactMessage[]>([]);
-  const [applications, setApplications] = useState<CareerApplication[]>([]);
-  const [systemInfo, setSystemInfo] = useState<any>(INITIAL_SYSTEM_INFO);
-  const [partners, setPartners] = useState<PartnerCompany[]>([]);
+  // Core synchronized application state with initial local storage hydration to prevent paint flicker
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_projects');
+      return saved ? JSON.parse(saved) : INITIAL_PROJECTS;
+    } catch {
+      return INITIAL_PROJECTS;
+    }
+  });
+  const [services, setServices] = useState<Service[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_services');
+      const raw = saved ? JSON.parse(saved) : INITIAL_SERVICES;
+      return raw.map((s: any) => {
+        if (s.id === 's2' && (s.features.length === 4 || s.features.includes('Seismic and wind resistant steel frames'))) {
+          return { ...s, features: INITIAL_SERVICES[1].features };
+        }
+        return s;
+      });
+    } catch {
+      return INITIAL_SERVICES;
+    }
+  });
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_testimonials');
+      return saved ? JSON.parse(saved) : INITIAL_TESTIMONIALS;
+    } catch {
+      return INITIAL_TESTIMONIALS;
+    }
+  });
+  const [team, setTeam] = useState<TeamMember[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_team');
+      return saved ? JSON.parse(saved) : INITIAL_TEAM;
+    } catch {
+      return INITIAL_TEAM;
+    }
+  });
+  const [industries, setIndustries] = useState<Industry[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_industries');
+      return saved ? JSON.parse(saved) : INITIAL_INDUSTRIES;
+    } catch {
+      return INITIAL_INDUSTRIES;
+    }
+  });
+  const [certificates, setCertificates] = useState<Certificate[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_certs');
+      return saved ? JSON.parse(saved) : INITIAL_CERTIFICATES;
+    } catch {
+      return INITIAL_CERTIFICATES;
+    }
+  });
+  const [careers, setCareers] = useState<CareerListing[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_careers');
+      return saved ? JSON.parse(saved) : INITIAL_CAREERS;
+    } catch {
+      return INITIAL_CAREERS;
+    }
+  });
+  const [quotes, setQuotes] = useState<QuoteRequest[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_quotes');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [contacts, setContacts] = useState<ContactMessage[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_contacts');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [applications, setApplications] = useState<CareerApplication[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_applications');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [systemInfo, setSystemInfo] = useState<any>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_system');
+      const parsed = saved ? { ...INITIAL_SYSTEM_INFO, ...JSON.parse(saved) } : INITIAL_SYSTEM_INFO;
+      if (parsed.logoUrl === 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781280142/samples/radial.jpg' || 
+          parsed.logoUrl === 'https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781288451/samples/chair-and-coffee-table.png') {
+        parsed.logoUrl = INITIAL_SYSTEM_INFO.logoUrl;
+      }
+      return parsed;
+    } catch {
+      return INITIAL_SYSTEM_INFO;
+    }
+  });
+  const [partners, setPartners] = useState<PartnerCompany[]>(() => {
+    try {
+      const saved = localStorage.getItem('tasha_partners');
+      return saved ? JSON.parse(saved) : INITIAL_PARTNERS;
+    } catch {
+      return INITIAL_PARTNERS;
+    }
+  });
 
   // Tab/Path mappings for professional clean URLs
   const TAB_TO_PATH: { [key: string]: string } = {
@@ -495,6 +590,24 @@ export default function App() {
             parsed.logoUrl = INITIAL_SYSTEM_INFO.logoUrl;
           }
           setSystemInfo(parsed);
+
+          // Update LocalStorage cache to ensure identical immediate paint on next refresh
+          try {
+            localStorage.setItem('tasha_projects', JSON.stringify(liveProjects));
+            localStorage.setItem('tasha_services', JSON.stringify(syncedServices));
+            localStorage.setItem('tasha_testimonials', JSON.stringify(liveTestimonials));
+            localStorage.setItem('tasha_team', JSON.stringify(liveTeam));
+            localStorage.setItem('tasha_industries', JSON.stringify(liveIndustries));
+            localStorage.setItem('tasha_certs', JSON.stringify(liveCerts));
+            localStorage.setItem('tasha_careers', JSON.stringify(liveCareers));
+            localStorage.setItem('tasha_quotes', JSON.stringify(liveQuotes));
+            localStorage.setItem('tasha_contacts', JSON.stringify(liveContacts));
+            localStorage.setItem('tasha_applications', JSON.stringify(liveApplications));
+            localStorage.setItem('tasha_system', JSON.stringify(parsed));
+            localStorage.setItem('tasha_partners', JSON.stringify(livePartners));
+          } catch (e) {
+            console.warn("Failed to write live Firestore sync data to LocalStorage cache", e);
+          }
           return;
         }
       } catch (err) {
