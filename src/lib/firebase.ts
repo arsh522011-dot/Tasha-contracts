@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { 
-  initializeFirestore, 
+  getFirestore, 
   doc, 
   getDoc, 
   setDoc,
@@ -10,11 +10,9 @@ import {
 } from "firebase/firestore";
 import firebaseConfig from "../../firebase-applet-config.json";
 
-// Initialize Firebase with dynamic parameters and force long-polling for proxied/sandboxed iframe environments
+// Initialize Firebase with dynamic parameters
 const app = initializeApp(firebaseConfig);
-export const db = initializeFirestore(app, {
-  experimentalForceLongPolling: true,
-}, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 
 
 export enum OperationType {
@@ -54,24 +52,23 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
-// Dry-run checking Firestore availability on app initialization with a 3-second fast timeout
+// Dry-run checking Firestore availability on app initialization
 export async function testConnection() {
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => reject(new Error('timeout')), 3000);
-  });
-
   try {
-    await Promise.race([
-      getDocFromServer(doc(db, 'projects', 'ping')),
-      timeoutPromise
-    ]);
+    const connectionPromise = getDocFromServer(doc(db, 'projects', 'ping'));
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('timeout')), 1500)
+    );
+    await Promise.race([connectionPromise, timeoutPromise]);
     console.log("Firebase connection initialized; database read evaluated successfully.");
     return true;
   } catch (error) {
     if (error instanceof Error && error.message === 'timeout') {
-      console.warn("Firestore connection check timed out after 3 seconds. Using offline/local mode.");
+      console.warn("Firestore connection check timed out (1.5s limit reached). Falling back to offline mode.");
     } else if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.error("Please check your Firebase configuration or dynamic network status.");
+      console.warn("Firestore is offline. Falling back to offline mode.");
+    } else {
+      console.warn("Firestore connection check failed:", error);
     }
     return false;
   }

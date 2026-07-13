@@ -22,6 +22,7 @@ import { CareersSection } from './components/CareersSection';
 import { AdminPanel } from './components/AdminPanel';
 import { WebMediaManager } from './components/WebMediaManager';
 import { AddTestimonialForm } from './components/AddTestimonialForm';
+import { optimizeImage } from './utils/imageOptimizer';
 
 // Firebase & Firestore sync layer
 import { testConnection } from './lib/firebase';
@@ -841,7 +842,7 @@ export default function App() {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781470506/xi5glrd0y0orfruy70hm.png"
+          src={optimizeImage("https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781470506/xi5glrd0y0orfruy70hm.png", 500)}
           alt="Tasha Contracts India"
           className="max-w-[90%] md:max-w-[500px] h-auto object-contain select-none pb-4"
         />
@@ -870,7 +871,7 @@ export default function App() {
           >
             {systemInfo.logoUrl ? (
               <img 
-                src={systemInfo.logoUrl || null} 
+                src={optimizeImage(systemInfo.logoUrl, 300) || undefined} 
                 alt="Tasha Contracts Logo" 
                 referrerPolicy="no-referrer"
                 loading="eager"
@@ -1026,8 +1027,8 @@ export default function App() {
                 loop 
                 muted 
                 playsInline 
-                preload="auto"
-                poster={systemInfo.heroPosterUrl || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1920&auto=format&fit=crop"}
+                preload="metadata"
+                poster={optimizeImage(systemInfo.heroPosterUrl || "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=1920", 1200)}
                 className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-luminosity"
                 src={systemInfo.heroVideoUrl || "https://res.cloudinary.com/dpxoxrnrd/video/upload/v1781097285/po6wg43tokovftxnpxfa.mp4"}
               />
@@ -1213,9 +1214,11 @@ export default function App() {
                   className="lg:col-span-5 relative h-80 md:h-[420px] rounded-2xl overflow-hidden shadow-lg border border-slate-300 bg-slate-200"
                 >
                   <img 
-                    src="https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781122254/r8abeqly5cbung126iay.jpg" 
+                    src={optimizeImage("https://res.cloudinary.com/dpxoxrnrd/image/upload/v1781122254/r8abeqly5cbung126iay.jpg", 600)} 
                     alt="Pioneering Civil Engineer" 
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover mix-blend-normal hover:scale-105 transition-all duration-500"
                   />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/80 to-transparent p-6 text-white text-left">
@@ -1418,9 +1421,11 @@ export default function App() {
                     }`}
                   >
                     <img 
-                      src={project.image || null} 
+                      src={optimizeImage(project.image, 400) || undefined} 
                       alt={project.title} 
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-955 to-transparent"></div>
@@ -1969,9 +1974,11 @@ export default function App() {
                           : 'w-36 h-36 rounded-full'
                       } bg-slate-50`}>
                         <img 
-                          src={systemInfo.founderImage || null} 
+                          src={optimizeImage(systemInfo.founderImage, 300) || undefined} 
                           alt={systemInfo.founderName || "Founder"}
                           referrerPolicy="no-referrer"
+                          loading="lazy"
+                          decoding="async"
                           className={`w-full h-full transition-transform duration-300 ${
                             systemInfo.founderImageFit === 'contain' 
                               ? 'object-contain p-1.5' 
@@ -2309,8 +2316,10 @@ export default function App() {
                             className="group relative rounded-2xl overflow-hidden border border-slate-200 bg-white shadow-sm cursor-pointer hover:shadow-md transition-all h-64"
                           >
                             <img 
-                              src={p.image} 
+                              src={optimizeImage(p.image, 400) || undefined} 
                               alt={p.title}
+                              loading="lazy"
+                              decoding="async"
                               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
@@ -2416,9 +2425,11 @@ export default function App() {
                 >
                   <div className="relative h-48 overflow-hidden bg-slate-900">
                     <img 
-                      src={project.image || null} 
+                      src={optimizeImage(project.image, 400) || undefined} 
                       alt={project.title}
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-all duration-350" 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>

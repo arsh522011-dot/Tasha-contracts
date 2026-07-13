@@ -4,6 +4,7 @@ import {
   X, MapPin, Calendar, User, CheckCircle2, Clock, 
   ChevronLeft, ChevronRight, Maximize2 
 } from 'lucide-react';
+import { optimizeImage } from '../utils/imageOptimizer';
 
 interface ProjectDetailsPopupProps {
   project: Project;
@@ -154,7 +155,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
             }`}>
               {/* Main Active image */}
               <img 
-                src={allImages[activeImgIndex] || undefined} 
+                src={optimizeImage(allImages[activeImgIndex], 800) || undefined} 
                 alt={`${project.title} gallery showcase`}
                 referrerPolicy="no-referrer"
                 loading="eager"
@@ -211,7 +212,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
                       }`}
                     >
                       <img 
-                        src={imgUrl || undefined} 
+                        src={optimizeImage(imgUrl, 160) || undefined} 
                         alt="Thumbnail" 
                         loading="lazy"
                         referrerPolicy="no-referrer"
@@ -308,7 +309,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
                   onMouseLeave={() => setIsDragging(false)}
                 >
                   <img 
-                    src={project.beforeImage || null} 
+                    src={optimizeImage(project.beforeImage, 800) || undefined} 
                     alt="Before transformation" 
                     className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                     referrerPolicy="no-referrer"
@@ -322,7 +323,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
                     style={{ left: `${sliderPosition}%` }}
                   >
                     <img 
-                      src={project.afterImage || null} 
+                      src={optimizeImage(project.afterImage, 800) || undefined} 
                       alt="After transformation" 
                       className="absolute inset-y-0 right-0 w-full h-full object-cover pointer-events-none"
                       style={{ 
@@ -353,7 +354,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className={`relative rounded-xl overflow-hidden border ${isDark ? 'border-slate-800' : 'border-slate-200'}`}>
                     <img 
-                      src={project.beforeImage || null} 
+                      src={optimizeImage(project.beforeImage, 600) || undefined} 
                       alt="Raw site stage" 
                       className="w-full h-48 object-cover" 
                       referrerPolicy="no-referrer"
@@ -364,7 +365,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
                   </div>
                   <div className={`relative rounded-xl overflow-hidden border ${isDark ? 'border-amber-500/20' : 'border-amber-500/40'}`}>
                     <img 
-                      src={project.image || null} 
+                      src={optimizeImage(project.image, 600) || undefined} 
                       alt="Completed structure" 
                       className="w-full h-48 object-cover" 
                       referrerPolicy="no-referrer"
@@ -429,7 +430,7 @@ export const ProjectDetailsPopup: React.FC<ProjectDetailsPopupProps> = ({ projec
             {/* Display container */}
             <div className="relative max-h-[75vh] max-w-full overflow-hidden flex items-center justify-center p-2 rounded-xl">
               <img 
-                src={allImages[lightboxImageIndex] || undefined} 
+                src={optimizeImage(allImages[lightboxImageIndex], 1200) || undefined} 
                 alt="Lightbox View" 
                 referrerPolicy="no-referrer"
                 className="max-h-[75vh] max-w-full rounded-lg object-contain shadow-2xl transition-all duration-350 pointer-events-auto"
