@@ -1042,18 +1042,12 @@ export default function App() {
               </div>
             </motion.div>
           ) : (
-            <div className="flex flex-col items-center gap-4 mt-4">
+            <div className="flex flex-col items-center gap-4 mt-8">
               {/* Sleek Minimalist Ring Loader */}
-              <div className="relative w-12 h-12">
-                <div className="absolute inset-0 rounded-full border-4 border-slate-200/50"></div>
+              <div className="relative w-10 h-10">
+                <div className="absolute inset-0 rounded-full border-4 border-slate-100 dark:border-slate-800"></div>
                 <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
               </div>
-              <p className="text-sm font-semibold text-slate-600 tracking-wider uppercase animate-pulse">
-                Securing Cloud Database...
-              </p>
-              <span className="text-xs text-slate-400">
-                Fetching latest architectural portfolios & profiles on first load
-              </span>
             </div>
           )}
         </div>
