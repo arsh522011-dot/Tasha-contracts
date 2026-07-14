@@ -985,6 +985,7 @@ let keywords = "construction company in india, construction company in uttar pra
   const isDark = themeMode === 'dark';
 
  if (loadingError) {
+    return (
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
