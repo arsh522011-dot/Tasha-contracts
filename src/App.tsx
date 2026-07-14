@@ -936,6 +936,7 @@ let keywords = "construction company in india, construction company in uttar pra
       console.error(err);
       alert("Error: Cloud data download failed. Please verify database connectivity.");
     }
+    };
   // Submit quote request from the form page
   const handleQuoteSubmit = (quote: QuoteRequest) => {
     const updated = [quote, ...quotes];
