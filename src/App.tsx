@@ -1273,7 +1273,7 @@ let keywords = "construction company in india, construction company in uttar pra
                   transition={{ delay: 0.6, duration: 0.6 }}
                   className="text-sm md:text-base text-slate-300 leading-relaxed font-sans max-w-xl"
                 >
-                  {systemInfo.subheading || "Trusted residential & commercial construction experts delivering quality, safety, and on-time results across India circles."}
+                  {systemInfo.subheading || "Trusted industrial, commercial and civil construction company delivering PEB structures, LGSF buildings, warehouses, factories, steel structures and turnkey construction projects across India. Serving Amroha, Hasanpur, Moradabad, Sambhal, Uttar Pradesh, Delhi NCR, Haryana and Uttarakhand."}
                 </motion.p>
 
                 <motion.div 
