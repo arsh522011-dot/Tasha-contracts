@@ -985,8 +985,7 @@ let keywords = "construction company in india, construction company in uttar pra
   const uniqueCategories = ['All', 'LGSF / Prefabricated', 'Civil Construction', 'Commercial', 'Residential', 'Interior Fit-Out'];
   const isDark = themeMode === 'dark';
 
-  if (isLoading || !minLoadingPassed || loadingError) {
-    return (
+ if (loadingError) {
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
