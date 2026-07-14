@@ -1264,7 +1264,7 @@ let keywords = "construction company in india, construction company in uttar pra
                   transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                   className="text-4xl sm:text-5xl lg:text-6xl font-black font-display leading-[1.08] text-white"
                 >
-                  {systemInfo.slogan || "Building Strong Foundations for the Future"}
+                  {systemInfo.slogan || "Leading Industrial, Commercial, PEB & LGSF Construction Company in India"}
                 </motion.h1>
 
                 <motion.p 
