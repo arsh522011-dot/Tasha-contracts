@@ -264,13 +264,13 @@ export default function App() {
 
   // Dynamic SEO Title and Meta Description state manager based on navigation page and sub-services
   useEffect(() => {
-    let title = "Construction Company in India | PEB, LGSF, Industrial & Turnkey Projects | Tasha Contracts India";
-let description = "Tasha Contracts India is a leading construction company delivering PEB structures, LGSF buildings, warehouses, factories, commercial, industrial and turnkey construction projects across India. Serving Uttar Pradesh, Delhi NCR, Haryana and Uttarakhand.";
-let keywords = "construction company in india, construction company in uttar pradesh, construction company in amroha, construction company in hasanpur, construction company in moradabad, construction company in sambhal, construction company in noida, construction company in delhi, construction company in haryana, construction company in uttarakhand, construction company near me, civil contractor, civil contractor amroha, civil contractor moradabad, industrial construction company, commercial construction company, warehouse construction company, factory construction company, PEB structure company, PEB construction company, LGSF construction company, steel building company, turnkey construction company, industrial shed construction, factory shed construction, warehouse builder, commercial builder, residential construction company";
+    let title = "Tasha Contracts India | Construction, Civil, Interior & Turnkey Project Solutions";
+    let description = "Tasha Contracts India provides construction, civil engineering, interior fit-out, renovation, industrial, commercial and turnkey project solutions across India with quality execution and timely delivery.";
+    let keywords = "Construction Company India, Civil Construction Contractor, Turnkey Construction Services, Building Construction Company, Industrial Construction Contractor, Commercial Construction Services, Residential Construction Services, Infrastructure Development Company, Civil Engineering Services, General Contractor India, Project Management Services, Construction Project Execution, EPC Contractor India, Design and Build Contractor, Construction Solutions Provider, Factory Construction Contractor, Warehouse Construction Company, Industrial Shed Construction, Steel Structure Construction, PEB Building Contractor, Manufacturing Plant Construction, Commercial Building Contractor, Office Building Construction, Hospital Construction Company, School Construction Contractor, Interior Fit Out Contractor, Commercial Interior Contractor, Office Interior Design and Build, Building Renovation Services, Structural Repair Contractor, Turnkey Interior Solutions, Retail Store Interior Contractor, Government Contractor India, CPWD Contractor, PWD Contractor, Infrastructure Contractor, Public Sector Construction Projects, Government Civil Work Contractor, Road Construction Contractor, Bridge Construction Company, Hire Construction Contractor, Best Construction Company, Turnkey Construction Company, Commercial Building Contractor Near Me, Industrial Construction Contractor, Civil Contractor for Factory Construction, Building Construction Services, Construction Project Management Company, Construction Company in Amroha, Civil Contractor in Hasanpur, Building Contractor in Amroha, Construction Services in Uttar Pradesh, Industrial Construction Company in Uttar Pradesh, Commercial Construction Contractor in Amroha, Turnkey Project Contractor in Hasanpur, Tasha Contracts India, Tasha Contracts, LGSF, Prefabricated Industrial Sheds, Pre-engineered Buildings, Portable Cabins, Civil Construction, Amroha, Uttar Pradesh, Building & Construction, Building Material Supplier, Construction Material, TMT Bars, Cement Supplier, Tiles Manufacturer, PVC Pipe, UPVC Windows, Plywood Supplier, Modular Kitchen, Wall Panels, Roofing Sheets, False Ceiling, ACP Sheet, Glass Partition, Interior Designer, Home Renovation, House Construction, Commercial Construction, Turnkey Construction, Civil Contractor";
+
     if (activeTab === 'home') {
-    title = "Construction Company in India | PEB, LGSF, Warehouse & Factory Construction | Tasha Contracts India";
-      description = "Tasha Contracts India is a trusted construction company in India specializing in PEB structures, LGSF buildings, warehouses, factories, commercial buildings, industrial construction and turnkey projects. We serve Amroha, Hasanpur, Moradabad, Sambhal, Noida, Delhi NCR, Haryana, Uttarakhand and all over India.";
-   keywords = "construction company in india, construction company in uttar pradesh, construction company in amroha, construction company in hasanpur, construction company in moradabad, construction company in sambhal, construction company in noida, construction company in delhi, construction company in haryana, construction company in uttarakhand, construction company near me, civil contractor india, civil contractor uttar pradesh, industrial construction company, commercial construction company, warehouse construction company, factory construction company, peb structure company, peb building contractor, lgsf construction company, steel structure company, turnkey construction company, prefab building company";
+      title = "Tasha Contracts India | Construction, Civil, Interior & Turnkey Project Solutions";
+      description = "Tasha Contracts India provides construction, civil engineering, interior fit-out, renovation, industrial, commercial and turnkey project solutions across India with quality execution and timely delivery.";
     } else if (activeTab === 'about') {
       title = "About Us & Quality Assurance | Tasha Contracts India ";
       description = "Learn about Tasha Contracts India, founded in 2015 by Mr. Jackson. Read our mission, high compliance engineering standards, and vision for LGSF & civil construction.";
@@ -936,7 +936,8 @@ let keywords = "construction company in india, construction company in uttar pra
       console.error(err);
       alert("Error: Cloud data download failed. Please verify database connectivity.");
     }
-    };
+  };
+
   // Submit quote request from the form page
   const handleQuoteSubmit = (quote: QuoteRequest) => {
     const updated = [quote, ...quotes];
@@ -984,7 +985,7 @@ let keywords = "construction company in india, construction company in uttar pra
   const uniqueCategories = ['All', 'LGSF / Prefabricated', 'Civil Construction', 'Commercial', 'Residential', 'Interior Fit-Out'];
   const isDark = themeMode === 'dark';
 
- if (loadingError) {
+  if (isLoading || !minLoadingPassed || loadingError) {
     return (
       <motion.div 
         initial={{ opacity: 0 }}
@@ -1263,7 +1264,7 @@ let keywords = "construction company in india, construction company in uttar pra
                   transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
                   className="text-4xl sm:text-5xl lg:text-6xl font-black font-display leading-[1.08] text-white"
                 >
-                  {systemInfo.slogan || "Leading Industrial, Commercial, PEB & LGSF Construction Company in India"}
+                  {systemInfo.slogan || "Building Strong Foundations for the Future"}
                 </motion.h1>
 
                 <motion.p 
@@ -1272,7 +1273,7 @@ let keywords = "construction company in india, construction company in uttar pra
                   transition={{ delay: 0.6, duration: 0.6 }}
                   className="text-sm md:text-base text-slate-300 leading-relaxed font-sans max-w-xl"
                 >
-                  {systemInfo.subheading || "Tasha Contracts India is a trusted industrial, commercial and civil construction company specializing in PEB structures, LGSF buildings, warehouses, factories, steel structures and turnkey construction projects across India. We deliver high-quality construction solutions for industrial, commercial and residential projects across Amroha, Hasanpur, Moradabad, Sambhal, Noida, Delhi NCR, Uttar Pradesh, Haryana, Uttarakhand and other major cities in India.."}
+                  {systemInfo.subheading || "Trusted residential & commercial construction experts delivering quality, safety, and on-time results across India circles."}
                 </motion.p>
 
                 <motion.div 
@@ -3558,55 +3559,57 @@ let keywords = "construction company in india, construction company in uttar pra
         </div>
 
         {/* COMPREHENSIVE WHITE-HAT CRAWLABLE SEO DIRECTORY & KEYWORD INDEX */}
-        <div className={`mt-10 pt-6 border-t ${isDark ? 'border-slate-850' : 'border-slate-200/70'}`}>
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center justify-between">
-              <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
-                Sitemap SEO Directory &amp; Keyword Index
-              </span>
-              <span className={`text-[9px] font-bold ${isDark ? 'text-emerald-500/80' : 'text-emerald-600/80'} bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider`}>
-                Search Bot Verified
-              </span>
-            </div>
-            <p className={`text-[9.5px] leading-relaxed ${isDark ? 'text-slate-550' : 'text-slate-400'} border-b ${isDark ? 'border-slate-900' : 'border-slate-100'} pb-2`}>
-              Tasha Contracts India maintains indexing tokens to enhance regional searchability on Google Search, Gemini, ChatGPT Search, and Copilot AI indexes across Uttar Pradesh, Delhi NCR, and nationwide:
-            </p>
-            <div className="flex flex-wrap gap-1.5 pt-1.5 max-h-[140px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
-              {[
-                "Construction Company India", "Civil Construction Contractor", "Turnkey Construction Services", "Building Construction Company", 
-                "Industrial Construction Contractor", "Commercial Construction Services", "Residential Construction Services", "Infrastructure Development Company", 
-                "Civil Engineering Services", "General Contractor India", "Project Management Services", "Construction Project Execution", 
-                "EPC Contractor India", "Design and Build Contractor", "Construction Solutions Provider", "Factory Construction Contractor", 
-                "Warehouse Construction Company", "Industrial Shed Construction", "Steel Structure Construction", "PEB Building Contractor", 
-                "Manufacturing Plant Construction", "Commercial Building Contractor", "Office Building Construction", "Hospital Construction Company", 
-                "School Construction Contractor", "Interior Fit Out Contractor", "Commercial Interior Contractor", "Office Interior Design and Build", 
-                "Building Renovation Services", "Structural Repair Contractor", "Turnkey Interior Solutions", "Retail Store Interior Contractor", 
-                "Government Contractor India", "CPWD Contractor", "PWD Contractor", "Infrastructure Contractor", "Public Sector Construction Projects", 
-                "Government Civil Work Contractor", "Road Construction Contractor", "Bridge Construction Company", "Construction Company in Amroha", 
-                "Civil Contractor in Hasanpur", "Building Contractor in Amroha", "Construction Services in Uttar Pradesh", 
-                "Industrial Construction Company in Uttar Pradesh", "Commercial Construction Contractor in Amroha", "Turnkey Project Contractor in Hasanpur", 
-                "Hire Construction Contractor", "Best Construction Company", "Turnkey Construction Company", "Commercial Building Contractor Near Me", 
-                "Civil Contractor for Factory Construction", "Building Construction Services", "Construction Project Management Company", 
-                "Building & Construction", "Building Material Supplier", "Construction Material", "TMT Bars", "Cement Supplier", 
-                "Tiles Manufacturer", "PVC Pipe", "UPVC Windows", "Plywood Supplier", "Modular Kitchen", "Wall Panels", 
-                "Roofing Sheets", "False Ceiling", "ACP Sheet", "Glass Partition", "Interior Designer", "Home Renovation", 
-                "House Construction", "Commercial Construction", "Turnkey Construction", "Civil Contractor"
-              ].map((keyword, index) => (
-                <span 
-                  key={index} 
-                  className={`text-[9px] font-semibold select-all font-mono transition-colors border px-2 py-0.5 rounded cursor-default ${
-                    isDark 
-                      ? 'bg-slate-900/30 border-slate-800 text-slate-500 hover:text-amber-500 hover:border-amber-550/30' 
-                      : 'bg-slate-200/30 border-slate-300/40 text-slate-500 hover:text-amber-600 hover:border-amber-500/35'
-                  }`}
-                  title={`${keyword} - Index Segment`}
-                >
-                  {keyword}
+        {activeTab !== 'home' && (
+          <div className={`mt-10 pt-6 border-t ${isDark ? 'border-slate-850' : 'border-slate-200/70'}`}>
+            <div className="flex flex-col gap-2.5">
+              <div className="flex items-center justify-between">
+                <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                  Sitemap SEO Directory &amp; Keyword Index
                 </span>
-              ))}
+                <span className={`text-[9px] font-bold ${isDark ? 'text-emerald-500/80' : 'text-emerald-600/80'} bg-emerald-500/10 px-1.5 py-0.5 rounded uppercase tracking-wider`}>
+                  Search Bot Verified
+                </span>
+              </div>
+              <p className={`text-[9.5px] leading-relaxed ${isDark ? 'text-slate-550' : 'text-slate-400'} border-b ${isDark ? 'border-slate-900' : 'border-slate-100'} pb-2`}>
+                Tasha Contracts India maintains indexing tokens to enhance regional searchability on Google Search, Gemini, ChatGPT Search, and Copilot AI indexes across Uttar Pradesh, Delhi NCR, and nationwide:
+              </p>
+              <div className="flex flex-wrap gap-1.5 pt-1.5 max-h-[140px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
+                {[
+                  "Construction Company India", "Civil Construction Contractor", "Turnkey Construction Services", "Building Construction Company", 
+                  "Industrial Construction Contractor", "Commercial Construction Services", "Residential Construction Services", "Infrastructure Development Company", 
+                  "Civil Engineering Services", "General Contractor India", "Project Management Services", "Construction Project Execution", 
+                  "EPC Contractor India", "Design and Build Contractor", "Construction Solutions Provider", "Factory Construction Contractor", 
+                  "Warehouse Construction Company", "Industrial Shed Construction", "Steel Structure Construction", "PEB Building Contractor", 
+                  "Manufacturing Plant Construction", "Commercial Building Contractor", "Office Building Construction", "Hospital Construction Company", 
+                  "School Construction Contractor", "Interior Fit Out Contractor", "Commercial Interior Contractor", "Office Interior Design and Build", 
+                  "Building Renovation Services", "Structural Repair Contractor", "Turnkey Interior Solutions", "Retail Store Interior Contractor", 
+                  "Government Contractor India", "CPWD Contractor", "PWD Contractor", "Infrastructure Contractor", "Public Sector Construction Projects", 
+                  "Government Civil Work Contractor", "Road Construction Contractor", "Bridge Construction Company", "Construction Company in Amroha", 
+                  "Civil Contractor in Hasanpur", "Building Contractor in Amroha", "Construction Services in Uttar Pradesh", 
+                  "Industrial Construction Company in Uttar Pradesh", "Commercial Construction Contractor in Amroha", "Turnkey Project Contractor in Hasanpur", 
+                  "Hire Construction Contractor", "Best Construction Company", "Turnkey Construction Company", "Commercial Building Contractor Near Me", 
+                  "Civil Contractor for Factory Construction", "Building Construction Services", "Construction Project Management Company", 
+                  "Building & Construction", "Building Material Supplier", "Construction Material", "TMT Bars", "Cement Supplier", 
+                  "Tiles Manufacturer", "PVC Pipe", "UPVC Windows", "Plywood Supplier", "Modular Kitchen", "Wall Panels", 
+                  "Roofing Sheets", "False Ceiling", "ACP Sheet", "Glass Partition", "Interior Designer", "Home Renovation", 
+                  "House Construction", "Commercial Construction", "Turnkey Construction", "Civil Contractor"
+                ].map((keyword, index) => (
+                  <span 
+                    key={index} 
+                    className={`text-[9px] font-semibold select-all font-mono transition-colors border px-2 py-0.5 rounded cursor-default ${
+                      isDark 
+                        ? 'bg-slate-900/30 border-slate-800 text-slate-500 hover:text-amber-500 hover:border-amber-550/30' 
+                        : 'bg-slate-200/30 border-slate-300/40 text-slate-500 hover:text-amber-600 hover:border-amber-500/35'
+                    }`}
+                    title={`${keyword} - Index Segment`}
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
         </div>
 
         {/* Dynamic Legal and Copyright notes matches user requested items */}

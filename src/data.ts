@@ -485,7 +485,7 @@ export const INITIAL_SYSTEM_INFO = {
   emergencySupport: 'Emergency Support: 24/7 client hotline',
   mapHeader: 'Ground Floor Shop, Dhakka Amroha, (Uttar Pradesh)',
   mapDescription: 'Tasha Contracts Corporate Headquarters & Estimation Workshop. Near National Highway Transit, Uttar Pradesh, India.',
-  slogan: 'Leading Industrial, Commercial, PEB & LGSF Construction Company in India',
+  slogan: 'Leading Construction & Turnkey Project Company in India',
   headerTagline: 'Make Tomorrow With Us',
   subheading: 'Professional Turnkey Construction Services, Civil Engineering works, and LGSF Prefabricated solutions across Amroha, Hasanpur, Uttar Pradesh, and PAN India.',
   cloudinaryCloudName: 'dpxoxrnrd', // Extracted from user's provided link!
